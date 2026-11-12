@@ -1,0 +1,2 @@
+# 红魔调校台 · 设置持久化
+# 格式 key=value，每行一项；WebUI 每次改动自动写入，开机由 cfg.sh restore 回读

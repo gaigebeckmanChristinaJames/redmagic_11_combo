@@ -1,0 +1,2872 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<title>红魔调校台 · ling_凌 & 粥总靓仔</title>
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#09090b;--fg:#fafafa;--muted:#27272a;--muted-fg:#a1a1aa;
+  --card:#09090b;--border:#27272a;--primary:#fafafa;--primary-fg:#18181b;
+  --ring:rgba(250,250,250,.28);--ok:#22c55e;--warn:#f59e0b;
+  --r:0.75rem;--r-sm:0.5rem;
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue","PingFang SC","Noto Sans CJK SC","Microsoft YaHei",sans-serif;
+}
+html.light{
+  --bg:#ffffff;--fg:#09090b;--muted:#f4f4f5;--muted-fg:#71717a;
+  --card:#ffffff;--border:#e4e4e7;--primary:#18181b;--primary-fg:#fafafa;
+  --ring:rgba(9,9,11,.24);
+}
+html,body{margin:0;padding:0;height:100%;background:var(--bg);color:var(--fg);font-family:var(--sans);-webkit-font-smoothing:antialiased}
+body{overflow:hidden;font-size:14px;line-height:1.45}
+h1,h2,h3,p{margin:0}
+button{font-family:inherit;color:inherit;border:0;background:none;padding:0;cursor:pointer}
+input{font-family:inherit}
+
+/* 顶栏 */
+.appbar{position:fixed;left:0;right:0;top:0;height:60px;display:flex;align-items:center;gap:10px;
+  padding:0 16px;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border);z-index:30}
+.logo{width:34px;height:34px;border-radius:9px;background:var(--primary);color:var(--primary-fg);
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.5px;flex:none}
+.brand{min-width:0;flex:1}
+.brand h1{font-size:15px;font-weight:600;letter-spacing:-.2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brand p{font-size:11.5px;color:var(--muted-fg);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.badge{display:inline-flex;align-items:center;height:22px;padding:0 6px;max-width:104px;overflow:hidden;white-space:nowrap;border:1px solid var(--border);
+  border-radius:999px;font-size:11px;color:var(--muted-fg);font-variant-numeric:tabular-nums;flex:none}
+.iconbtn{width:34px;height:34px;border-radius:var(--r-sm);border:1px solid var(--border);display:flex;
+  align-items:center;justify-content:center;flex:none;color:var(--fg)}
+.iconbtn svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ic-sun{display:none}
+html.light .ic-moon{display:none}
+html.light .ic-sun{display:block}
+
+/* 分段标签 */
+.tabs{position:fixed;left:0;right:0;top:60px;height:52px;display:flex;align-items:center;
+  padding:0 12px;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(18px);
+  -webkit-backdrop-filter:blur(18px);border-bottom:1px solid var(--border);z-index:29}
+.tabbar{display:flex;width:100%;gap:2px;background:var(--muted);border-radius:9px;padding:3px}
+.pdot{flex:1;height:30px;border-radius:7px;font-size:12px;color:var(--muted-fg);font-weight:500;
+  display:flex;align-items:center;justify-content:center;transition:background .16s,color .16s}
+.pdot.on{background:var(--bg);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.16)}
+
+/* 页面 */
+#pager{position:fixed;left:0;right:0;top:112px;bottom:0;display:flex;overflow-x:auto;overflow-y:hidden;
+  scroll-snap-type:x mandatory;scrollbar-width:none}
+#pager::-webkit-scrollbar{display:none}
+.page{flex:0 0 100%;width:100%;height:100%;overflow-y:auto;scroll-snap-align:start;
+  -webkit-overflow-scrolling:touch;padding:16px 16px 40px}
+
+.phead{margin:2px 0 14px}
+.phead h2{font-size:19px;font-weight:600;letter-spacing:-.3px}
+.phead p{font-size:12.5px;color:var(--muted-fg);margin-top:3px}
+
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.card-head{display:flex;align-items:center;gap:10px}
+.card-title{flex:1;min-width:0}
+.card-title h3{font-size:14px;font-weight:600}
+.card-title small{display:block;font-size:11.5px;color:var(--muted-fg);margin-top:2px}
+.card-note{font-size:11px;color:var(--muted-fg);font-variant-numeric:tabular-nums}
+
+/* 列表行 */
+.list{margin-top:10px}
+.lrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 0;
+  border-top:1px solid var(--border)}
+.lrow:first-child{border-top:0}
+.lrow .k{font-size:12.5px;color:var(--muted-fg)}
+.lrow .v{font-size:13px;font-weight:500;text-align:right;word-break:break-all}
+.lrow .main{flex:1;min-width:0}
+.lrow .t{font-size:13px;font-weight:500}
+.lrow .s{font-size:11.5px;color:var(--muted-fg);margin-top:2px}
+
+/* 读数 */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);margin-top:14px;
+  border-top:1px solid var(--border);padding-top:14px}
+.stat{padding:0 2px;position:relative}
+.stat+.stat{border-left:1px solid var(--border);padding-left:12px}
+.stat b{display:block;font-size:22px;font-weight:600;letter-spacing:-.6px;font-variant-numeric:tabular-nums}
+.stat small{display:block;font-size:11px;color:var(--muted-fg);margin-top:2px}
+
+/* 进度 */
+.progress{height:6px;border-radius:999px;background:var(--muted);overflow:hidden;margin-top:12px}
+.progress i{display:block;height:100%;width:0;background:var(--primary);border-radius:999px;transition:width .3s}
+.pmeta{display:flex;align-items:baseline;gap:6px;margin-top:11px}
+.pmeta b{font-size:26px;font-weight:600;letter-spacing:-.8px;font-variant-numeric:tabular-nums}
+.pmeta span{font-size:12px;color:var(--muted-fg)}
+.hint{font-size:11.5px;color:var(--muted-fg);margin-top:10px;line-height:1.6}
+.hint b{color:var(--fg);font-weight:500}
+
+/* 开关 */
+.sw{width:40px;height:24px;border-radius:999px;background:var(--muted);border:1px solid var(--border);
+  position:relative;flex:none;transition:background .18s,border-color .18s}
+.sw i{position:absolute;top:2px;left:2px;width:18px;height:18px;border-radius:50%;background:var(--muted-fg);
+  transition:transform .18s,background .18s}
+.sw.on{background:var(--primary);border-color:var(--primary)}
+.sw.on i{transform:translateX(16px);background:var(--primary-fg)}
+.sw.busy{opacity:.55}
+
+/* 按钮 */
+.btn{height:34px;padding:0 14px;border-radius:var(--r-sm);background:var(--primary);color:var(--primary-fg);
+  font-size:12.5px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:6px}
+.btn.outline{background:transparent;color:var(--fg);border:1px solid var(--border)}
+.btn.ghost{background:transparent;color:var(--muted-fg);border:1px solid transparent}
+.btn.wide{width:100%;margin-top:12px}
+.btn.sm{height:30px;padding:0 11px;font-size:11.5px}
+.btnline{display:flex;gap:8px;margin-top:12px}
+.btnline .btn{flex:1}
+.btn:active{opacity:.85}
+
+/* 输入 */
+.inp-row{display:flex;align-items:center;gap:10px;margin-top:10px;border-top:1px solid var(--border);padding-top:10px}
+.inp-row label{font-size:12px;color:var(--muted-fg);width:96px;flex:none}
+.inp{flex:1;min-width:0;height:32px;border:1px solid var(--border);border-radius:var(--r-sm);background:transparent;
+  color:var(--fg);padding:0 10px;font-size:12.5px;outline:none;font-variant-numeric:tabular-nums}
+.inp:focus{border-color:var(--ring)}
+
+/* 档位 */
+.levels{display:flex;gap:6px;margin-top:12px}
+.lv{flex:1;height:32px;border-radius:var(--r-sm);border:1px solid var(--border);background:transparent;
+  font-size:12px;color:var(--fg);font-weight:500;font-variant-numeric:tabular-nums}
+.lv.on{background:var(--primary);color:var(--primary-fg);border-color:var(--primary)}
+
+.seg{display:flex;gap:3px;background:var(--muted);border-radius:9px;padding:3px;margin-top:12px}
+.tm-btn{flex:1;height:38px;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  font-size:12px;font-weight:500;color:var(--muted-fg)}
+.tm-btn small{font-size:10px;font-weight:400;margin-top:1px;opacity:.8}
+.tm-btn.on{background:var(--bg);color:var(--fg);box-shadow:0 1px 2px rgba(0,0,0,.16)}
+
+/* 日志 */
+.dot{width:7px;height:7px;border-radius:50%;background:var(--ok);flex:none}
+.logbar{display:flex;align-items:center;gap:8px;margin-top:12px}
+.logbar .spacer{flex:1}
+pre#log-view{margin:12px 0 0;padding:12px;background:var(--muted);border-radius:var(--r-sm);
+  font-size:11px;line-height:1.65;white-space:pre-wrap;word-break:break-all;max-height:46vh;overflow:auto;
+  color:var(--fg);font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+#status{font-size:12.5px;line-height:1.6;margin-top:10px;word-break:break-all}
+#run-text{font-size:11px;color:var(--muted-fg);margin-top:6px;white-space:pre-wrap;word-break:break-all}
+#ftags{display:none}
+
+/* 游戏 iframe */
+iframe#game-frame{width:100%;border:0;display:block;min-height:0;border-radius:var(--r-sm)}
+
+/* 弹层 */
+#sheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:flex-end;z-index:90;padding:12px}
+#sheet.open{display:flex}
+.sheet-inner{width:100%;max-height:82vh;overflow:auto;background:var(--card);border:1px solid var(--border);
+  border-radius:16px;padding:16px}
+.sheet-inner h3{font-size:15px;font-weight:600;margin-bottom:10px}
+.sheet-close{margin-top:14px;height:34px;border-radius:8px;background:var(--muted);display:flex;align-items:center;
+  justify-content:center;font-size:12.5px;color:var(--fg)}
+</style>
+<script>
+function toggleTheme(){
+  var r=document.documentElement;
+  var light=r.classList.toggle("light");
+  try{localStorage.setItem("rm_theme",light?"light":"dark")}catch(e){}
+  if(typeof pushTheme==="function")pushTheme();
+}
+(function(){try{if(localStorage.getItem("rm_theme")==="light")document.documentElement.classList.add("light")}catch(e){}})();
+</script>
+<style>
+.toast{position:fixed;left:16px;right:16px;bottom:26px;z-index:70;padding:11px 14px;border-radius:10px;background:var(--fg);color:var(--bg);font-size:12.5px;line-height:1.5;opacity:0;transform:translateY(10px);transition:opacity .18s,transform .18s;pointer-events:none;box-shadow:0 10px 30px rgba(0,0,0,.28)}
+.toast.show{opacity:1;transform:none}
+.toast.bad{background:#b91c1c;color:#fff}
+.alert{position:fixed;left:16px;right:16px;top:122px;z-index:69;display:none;padding:11px 14px;border-radius:10px;border:1px solid #b91c1c;background:#2a0e0e;color:#fecaca;font-size:12px;line-height:1.55}
+html.light .alert{background:#fef2f2;color:#991b1b;border-color:#fecaca}
+.alert.show{display:block}
+</style>
+<style id="v2">
+/* ===== 统一设计层 ===== */
+:root{--r:1rem;--r-sm:.625rem;--accent:var(--fg);--shadow:0 1px 2px rgba(0,0,0,.05)}
+html.light{--shadow:0 1px 2px rgba(24,24,27,.05)}
+html[data-skin="A"]{--accent:#52525b}
+html.light[data-skin="A"]{--accent:#18181b}
+html[data-skin="B"]{--primary:#2563eb;--primary-fg:#fff;--accent:#60a5fa}
+html.light[data-skin="B"]{--primary:#2563eb;--primary-fg:#fff;--accent:#2563eb;--ring:rgba(37,99,235,.25)}
+html[data-skin="C"]{--bg:#141210;--card:#1b1815;--border:#2c2822;--r:.5rem;--r-sm:.375rem;--accent:#d6cbb7}
+html.light[data-skin="C"]{--bg:#faf8f3;--card:#fff;--border:#e6dfd2;--fg:#1c1917;--muted:#f2eee5;--muted-fg:#6b6257;--accent:#1c1917}
+html[data-skin="D"]{--bg:#05070d;--card:#0a0f17;--border:#16202b;--accent:#22d3ee;--primary:#22d3ee;--primary-fg:#04121a;--ring:rgba(34,211,238,.3)}
+html.light[data-skin="D"]{--bg:#ffffff;--card:#ffffff;--border:#dbe4ec;--accent:#0891b2;--primary:#0891b2;--primary-fg:#fff}
+html[data-skin="E"]{--r:1.25rem;--r-sm:.875rem;--accent:#2dd4bf;--primary:#0d9488;--primary-fg:#fff}
+html.light[data-skin="E"]{--accent:#0d9488}
+.appbar{height:58px}
+#pager{top:58px;bottom:0}
+.page{padding:14px 16px calc(28px + env(safe-area-inset-bottom))}
+.phead{margin:4px 2px 14px}
+.phead h2{font-size:20px;font-weight:700;letter-spacing:-.5px}
+.phead p{font-size:12.5px;margin-top:4px}
+.card{border-radius:var(--r);box-shadow:var(--shadow);padding:16px}
+.card-head{gap:12px}
+.card-title h3{font-size:14.5px}
+.sw{width:44px;height:26px}
+.sw i{width:20px;height:20px}
+.sw.on i{transform:translateX(18px)}
+.sw.on{background:var(--accent);border-color:var(--accent)}
+html.light .sw.on i{background:#fff}
+.btn,.btn.sm{border-radius:10px}
+.badge{border-radius:9px;height:21px;font-size:9.5px;letter-spacing:-.2px}
+.iconbtn{width:34px;height:34px;border-radius:10px}
+
+
+#dnav{flex:1;overflow-y:auto;scrollbar-width:none;margin:0 -3px;padding:0 3px}
+#dnav::-webkit-scrollbar{display:none}
+.dgroup{margin-bottom:1px}
+.dgh{display:flex;align-items:center;gap:10px;height:44px;padding:0 10px;border-radius:11px;background:none;border:0;width:100%;text-align:left;font-size:14px;font-weight:600;color:var(--fg);position:relative}
+.dgh svg{width:19px;height:19px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.85;flex:none}
+.dgh .dcount{margin-left:auto;font-size:10px;font-weight:500;color:var(--muted-fg);background:var(--muted);padding:2px 6px;border-radius:7px}
+.dgh .chev{width:14px;height:14px;opacity:.5;transition:transform .42s cubic-bezier(.22,.8,.28,1);margin-left:2px}
+.dgroup.open .dgh .chev{transform:rotate(180deg)}
+.dgh.on{background:var(--muted)}
+.dgh.on::before{content:"";position:absolute;left:2px;top:11px;bottom:11px;width:3px;border-radius:3px;background:var(--accent)}
+.dsubs{max-height:0;overflow:hidden;transition:max-height .46s cubic-bezier(.22,.8,.28,1);contain:layout paint;will-change:max-height}
+.dsub{display:flex;align-items:center;gap:9px;height:33px;padding:0 10px 0 33px;width:100%;text-align:left;background:none;border:0;border-radius:9px;font-size:12.5px;color:var(--muted-fg);position:relative}
+.dsub::before{content:"";width:5px;height:5px;border-radius:50%;background:var(--border);flex:none;transition:.2s}
+.dsub.on{color:var(--fg);font-weight:600;background:color-mix(in srgb,var(--muted) 72%,transparent)}
+.dsub.on::before{background:var(--accent);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 16%,transparent)}
+.dsub:active{transform:scale(.985)}
+#crumb{position:fixed;left:50%;transform:translateX(-50%) translateY(8px);bottom:calc(58px + env(safe-area-inset-bottom));z-index:60;display:inline-flex;align-items:center;gap:7px;height:29px;padding:0 12px;border-radius:999px;border:1px solid var(--border);
+  background:color-mix(in srgb,var(--bg) 80%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);font-size:11px;color:var(--muted-fg);box-shadow:0 4px 14px rgba(0,0,0,.10);opacity:0;pointer-events:none;transition:opacity .26s ease,transform .26s ease}
+#crumb.on{opacity:1;pointer-events:auto;transform:translateX(-50%)}
+#crumb b{color:var(--fg);font-weight:600}
+#crumb .step{font-size:9.5px;color:var(--muted-fg);opacity:.8}
+
+/* 抽屉 */
+.ham svg{width:18px;height:18px}
+.scrim{position:fixed;inset:0;background:rgba(6,8,12,.52);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);opacity:0;pointer-events:none;transition:opacity .34s ease;z-index:74}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:fixed;top:0;left:0;bottom:0;width:286px;max-width:84vw;z-index:76;background:color-mix(in srgb,var(--bg) 92%,transparent);-webkit-backdrop-filter:blur(22px);backdrop-filter:blur(22px);border-right:1px solid var(--border);
+  transform:translateX(-104%);transition:transform .44s cubic-bezier(.22,.8,.28,1);padding:calc(18px + env(safe-area-inset-top)) 12px calc(14px + env(safe-area-inset-bottom));display:flex;flex-direction:column;box-shadow:22px 0 60px rgba(0,0,0,.16)}
+.drawer.open{transform:none}
+.dhead{display:flex;align-items:center;gap:11px;padding:4px 8px 16px}
+.dlogo{width:38px;height:38px;border-radius:11px;background:var(--accent);color:var(--bg);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;letter-spacing:.6px}
+html[data-skin="B"] .dlogo,html[data-skin="E"] .dlogo{background:var(--primary);color:#fff}
+.dtxt b{display:block;font-size:16px;letter-spacing:-.3px}
+.dtxt small{display:block;font-size:11px;color:var(--muted-fg);margin-top:2px}
+.dcap{font-size:10.5px;letter-spacing:.14em;color:var(--muted-fg);padding:6px 10px 8px}
+.ditem{display:flex;align-items:center;gap:13px;height:47px;padding:0 12px;border-radius:12px;font-size:15px;font-weight:600;color:var(--fg);
+  opacity:0;transform:translateX(-16px);transition:opacity .32s ease,transform .32s ease,background .18s ease,color .18s ease;position:relative;width:100%;text-align:left}
+.drawer.open .ditem{opacity:1;transform:none;transition-delay:calc(.06s + var(--i,0)*.045s)}
+.ditem svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;opacity:.86;flex:none}
+.ditem.on{background:var(--muted);color:var(--fg)}
+.ditem.on::before{content:"";position:absolute;left:3px;top:12px;bottom:12px;width:3px;border-radius:3px;background:var(--accent)}
+.ditem:active{transform:scale(.985)}
+.dspacer{flex:1}
+.dmini{height:42px;font-size:13.5px;font-weight:500;color:var(--muted-fg)}
+.dfoot{font-size:10.5px;color:var(--muted-fg);padding:12px 10px 2px;border-top:1px solid var(--border);margin-top:8px}
+.dfoot .drow{display:flex;justify-content:space-between;gap:8px}
+.dfoot .drow+.drow{margin-top:3px;font-size:9.5px;opacity:.85}
+
+/* 智能风扇 */
+.fan-meter{display:flex;align-items:center;gap:14px;margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--muted);border:1px solid var(--border)}
+html.light[data-skin="C"] .fan-meter{background:#f4efe5}
+.fm-item{flex:1}
+.fm-item span{display:block;font-size:11px;color:var(--muted-fg)}
+.fm-item b{display:block;font-size:19px;letter-spacing:-.4px;margin-top:2px;font-variant-numeric:tabular-nums}
+.fm-sep{width:1px;height:30px;background:var(--border)}
+.curve{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.curve span{font-size:10.5px;color:var(--muted-fg);border:1px solid var(--border);border-radius:999px;padding:4px 9px;background:var(--bg)}
+
+/* 外观设置 */
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0 14px;border-bottom:1px solid var(--border)}
+.set-row b{font-size:14px}
+.set-row small{display:block;font-size:11px;color:var(--muted-fg);margin-top:2px}
+.set-cap{font-size:10.5px;letter-spacing:.12em;color:var(--muted-fg);padding:14px 2px 8px}
+.skin-row{display:flex;align-items:center;gap:12px;width:100%;text-align:left;padding:11px 12px;border-radius:12px;border:1px solid transparent;margin-bottom:6px;background:var(--muted)}
+.skin-row.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent) 9%,var(--muted))}
+.skin-dot{width:30px;height:30px;border-radius:9px;flex:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.16)}
+.skin-txt{flex:1}
+.skin-txt b{display:block;font-size:13.5px}
+.skin-txt small{display:block;font-size:11px;color:var(--muted-fg);margin-top:1px}
+.skin-tick{font-size:13px;color:var(--accent)}
+.set-tip{font-size:11px;color:var(--muted-fg);line-height:1.6;margin-top:12px}
+.log-meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.lm{padding:5px 9px;border-radius:999px;background:var(--muted);font-size:11px;color:var(--muted-fg);white-space:nowrap}
+.lm b{color:var(--fg);font-weight:600}
+.toast{bottom:calc(20px + env(safe-area-inset-bottom))}
+.alert{top:calc(128px + env(safe-area-inset-top))}
+</style>
+</head>
+<body>
+
+<header class="appbar">
+  <button class="iconbtn ham" onclick="openDrawer()" aria-label="打开导航">
+    <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+  </button>
+  <div class="logo">RM</div>
+  <div class="brand">
+    <h1>红魔调校台</h1>
+    <p id="model-head">NX799J · RedMagic 11</p>
+  </div>
+  <span class="badge" id="ver-head">v1.2.0</span>
+    <button class="iconbtn" onclick="openSettings()" aria-label="外观设置">
+    <svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2.2"/><circle cx="9" cy="16" r="2.2"/></svg>
+  </button>
+<button class="iconbtn" id="theme-btn" onclick="toggleTheme()" aria-label="切换亮暗主题">
+    <svg class="ic-moon" viewBox="0 0 24 24"><path d="M20 14.6A8.6 8.6 0 1 1 9.4 4a6.9 6.9 0 0 0 10.6 10.6z"/></svg>
+    <svg class="ic-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M19.1 4.9l-1.4 1.4M6.3 17.7l-1.4 1.4"/></svg>
+  </button>
+</header>
+
+<div id="scrim" class="scrim" onclick="closeDrawer()"></div>
+<aside id="drawer" class="drawer" aria-label="导航">
+  <div class="dhead">
+    <div class="dlogo">RM</div>
+    <div class="dtxt"><b>红魔调校台</b><small id="drawer-model">NX799J · RedMagic 11</small></div>
+  </div>
+  <div class="dcap">导航</div>
+  <nav id="dnav" aria-label="分类导航"></nav>
+
+  <button class="ditem dmini" onclick="openSettings()"><svg viewBox="0 0 24 24"><path d="M4 8h9M17 8h3M4 16h3M11 16h9"/><circle cx="15" cy="8" r="2.2"/><circle cx="9" cy="16" r="2.2"/></svg><span>外观与显示</span></button>
+  <div class="dfoot"><div class="drow"><span id="drawer-ver">v1.3.0</span><span>作者 · 做梦</span></div><div class="drow"><span>独立实现</span><span>GPL-3.0-or-later</span></div></div>
+</aside>
+
+
+
+
+
+<button id="crumb" onclick="openDrawer()" aria-label="当前位置"><b id="crumb-g">概览</b><span id="crumb-s">设备状态</span><span class="step" id="crumb-n"></span></button>
+
+<div id="pager">
+
+  <!-- 01 状态：只放手机状态 -->
+  <section class="page active">
+    <div class="phead">
+      <h2>设备状态</h2>
+      <p>手机硬件、电池与当前生效情况</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>实时读数</h3><small>电池温度 / 充电功率 / 电量</small></div>
+        <span class="card-note">BATTERY</span>
+      </div>
+      <div class="stats">
+        <div class="stat"><b id="batt-temp">--</b><small>温度 °C</small></div>
+        <div class="stat"><b id="batt-power">--</b><small>功率 W</small></div>
+        <div class="stat"><b id="bat-capacity">--</b><small>电量 %</small></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>设备信息</h3><small>系统与充电状态</small></div>
+        <span class="card-note">DEVICE</span>
+      </div>
+      <div class="list">
+        <div class="lrow"><span class="k">机型</span><span class="v" id="ri-model">--</span></div>
+        <div class="lrow"><span class="k">芯片平台</span><span class="v" id="ri-cpu">--</span></div>
+        <div class="lrow"><span class="k">系统版本</span><span class="v" id="ri-os">--</span></div>
+        <div class="lrow"><span class="k">电池健康</span><span class="v" id="ri-bat">--</span></div>
+        <div class="lrow"><span class="k">充电状态</span><span class="v" id="ri-chg">--</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>增强进度</h3><small>当前已启用的增强项</small></div>
+        <span class="card-note" id="ring-sub">/ 19 项</span>
+      </div>
+      <div class="pmeta"><b id="ring-num">0</b><span>项增强正在生效</span></div>
+      <div class="progress"><i id="ring-bar"></i></div>
+      <p class="hint">所有设置写入模块目录 <b>settings.txt</b>，重启与重装后自动回读。</p>
+      <div id="ftags"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>电池体检</h3><small>设计容量 / 循环次数 / 健康度</small></div>
+        <div class="sw" id="sw-bat" onclick="toggleBat()"><i></i></div>
+      </div>
+      <div id="bat-detail" style="display:none">
+        <div class="list">
+          <div class="lrow"><span class="k">设计容量</span><span class="v" id="bd-design">--</span></div>
+          <div class="lrow"><span class="k">当前满容</span><span class="v" id="bd-full">--</span></div>
+          <div class="lrow"><span class="k">循环次数</span><span class="v" id="bd-cycles">--</span></div>
+          <div class="lrow"><span class="k">电压</span><span class="v" id="bd-volt">--</span></div>
+          <div class="lrow"><span class="k">温度</span><span class="v" id="bd-temp">--</span></div>
+          <div class="lrow"><span class="k">健康度</span><span class="v" id="bd-percent">--</span></div>
+          <div class="lrow"><span class="k">健康状态</span><span class="v" id="bd-health">--</span></div>
+        </div>
+        <p class="hint" id="bat-desc">检测已关闭</p>
+      </div>
+    </div>
+  </section>
+<section class="page">
+    <div class="phead"><h2>性能与散热</h2><p>风扇 · 液冷 · 频率上限 · 充电与温控</p></div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>风扇极速</h3><small>1–5 官方档 + 6 档狂暴，写入后置只读锁</small></div>
+        <div class="sw" id="sw-fan" onclick="toggle('fan')"><i></i></div>
+      </div>
+      <div class="levels" id="fan-levels">
+        <button class="lv" data-lv="1" onclick="setFan(1)">1</button>
+        <button class="lv" data-lv="2" onclick="setFan(2)">2</button>
+        <button class="lv" data-lv="3" onclick="setFan(3)">3</button>
+        <button class="lv" data-lv="4" onclick="setFan(4)">4</button>
+        <button class="lv" data-lv="5" onclick="setFan(5)">5</button>
+        <button class="lv" data-lv="6" onclick="setFan(6)">6</button>
+      </div>
+      <p class="hint">当前档位：<b id="fan-rpm">—</b> · 开机自动应用上次档位</p>
+      <div class="lrow">
+        <div class="main"><div class="t">熄屏保持风扇</div><div class="s">灭屏后仍按所选档位运行，关机前自动停扇</div></div>
+        <div class="sw" id="sw-fankeep" onclick="toggle('fankeep')"><i></i></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>充电策略</h3><small>解除电流限制 · 阈值停充</small></div>
+      </div>
+      <div class="lrow" style="border-top:0">
+        <div class="main"><div class="t">充电加速</div><div class="s">解除电池侧电流限制，保留温控保护</div></div>
+        <div class="sw" id="sw-chg" onclick="toggle('chg')"><i></i></div>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">充电分离</div><div class="s">到阈值停充，回落 3% 自动恢复</div></div>
+        <div class="sw" id="sw-sep" onclick="toggle('sep')"><i></i></div>
+      </div>
+      <div class="inp-row">
+        <label>停充阈值 %</label>
+        <input class="inp" id="sep-threshold" type="number" inputmode="numeric" placeholder="85">
+        <button class="btn outline sm" onclick="setSepThreshold()">保存</button>
+      </div>
+      <div class="inp-row"><label>养护上限 %</label>
+        <div class="levels" style="margin:0">
+          <button class="lv" data-b="0" onclick="saveBatLimit(0)">关</button>
+          <button class="lv" data-b="80" onclick="saveBatLimit(80)">80</button>
+          <button class="lv" data-b="90" onclick="saveBatLimit(90)">90</button>
+          <button class="lv" data-b="100" onclick="saveBatLimit(100)">100</button>
+        </div>
+      </div>
+      <p class="hint">上限 90 以上需自行确认散热；仅在供电时动作，拔线自动复位。养护上限会定时把节点压回设定值。</p>
+    </div>
+
+    <div class="card" id="pump-card">
+      <div class="card-head">
+        <div class="card-title"><h3>液冷调速</h3><small>微泵档位 · 写入后回锁只读</small></div>
+        <div class="sw" id="sw-pump" onclick="toggle('pump')"><i></i></div>
+      </div>
+      <div class="levels" id="pump-levels">
+        <button class="lv" data-lv="1" onclick="setPump(1)">低</button>
+        <button class="lv" data-lv="2" onclick="setPump(2)">中</button>
+        <button class="lv" data-lv="3" onclick="setPump(3)">高</button>
+        <button class="lv" data-lv="4" onclick="setPump(4)">极速</button>
+      </div>
+      <p class="hint">四档对应 speed 40 / 60 / 80 / 90，freq 固定为 4。</p>
+    </div>
+    <div class="card" id="fan-auto-card">
+      <div class="card-head">
+        <div class="card-ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.2"/><path d="M12 9.6c0-3.2 1.3-5.1 3.4-5.1 2.1 0 3 2.1 1.6 4.2-1 1.4-2.6 2.3-5 2.3M14.4 12c3.2 0 5.1 1.3 5.1 3.4 0 2.1-2.1 3-4.2 1.6-1.4-1-2.3-2.6-2.3-5M9.6 12c-3.2 0-5.1-1.3-5.1-3.4 0-2.1 2.1-3 4.2-1.6 1.4 1 2.3 2.6 2.3 5M12 14.4c0 3.2-1.3 5.1-3.4 5.1-2.1 0-3-2.1-1.6-4.2 1-1.4 2.6-2.3 5-2.3"/></svg></div>
+        <div class="card-title"><h3>智能风扇</h3><small>按电池温度自动调速，无需手动切档</small></div>
+        <button class="sw" id="sw-fan_auto" onclick="toggle('fan_auto')" aria-label="智能风扇"><i></i></button>
+      </div>
+      <div class="fan-meter">
+        <div class="fm-item"><span>当前温度</span><b id="fan-temp">--</b></div>
+        <div class="fm-sep"></div>
+        <div class="fm-item"><span>自动档位</span><b id="fan-auto-lv">待机</b></div>
+      </div>
+      <div class="curve"><span>≤30° 停转</span><span>30° 3档</span><span>35° 4档</span><span>40° 5档</span></div>
+      <div class="card-note" style="margin-top:8px">按电池温度分档：30/35/40℃ 对应 3/4/5 档，每 5 秒采样一次。</div>
+    </div>
+
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>风扇曲线</h3><small>三个温度点 + 回滞，按自己机器调</small></div>
+      </div>
+      <div class="inp-row" style="border-top:0"><label>3 档 ℃</label><input class="inp" id="fan-t3" type="number" inputmode="numeric" placeholder="30"></div>
+      <div class="inp-row"><label>4 档 ℃</label><input class="inp" id="fan-t4" type="number" inputmode="numeric" placeholder="35"></div>
+      <div class="inp-row"><label>5 档 ℃</label><input class="inp" id="fan-t5" type="number" inputmode="numeric" placeholder="40"></div>
+      <div class="inp-row"><label>回滞 ℃</label><input class="inp" id="fan-hyst" type="number" inputmode="numeric" placeholder="2"></div>
+      <button class="btn wide" onclick="saveFanCurve()">保存曲线</button>
+      <p class="hint">升温到点即升档；降档要低于「温度点 − 回滞」，避免 34/35 之间反复跳。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>场景与定时</h3><small>游戏自动切风扇 / 夜间静音 / 温度墙</small></div>
+        <button class="sw" id="sw-scene_auto" onclick="toggle('scene_auto')" aria-label="场景自动"><i></i></button>
+      </div>
+      <div class="lrow" style="border-top:0">
+        <div class="main"><div class="t">场景名单</div><div class="s" id="scene-desc">未选择应用</div></div>
+        <button class="btn outline sm" onclick="openSceneSheet()">编辑</button>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">夜间静音</div><div class="s">时间段内停转风扇，来电/游戏场景优先</div></div>
+        <div class="sw" id="sw-night_quiet" onclick="toggle('night_quiet')"><i></i></div>
+      </div>
+      <div class="inp-row"><label>夜间时段</label><input class="inp" id="night-start" type="time" value="23:00"><input class="inp" id="night-end" type="time" value="07:00"></div>
+      <div class="inp-row"><label>温度墙 ℃</label><input class="inp" id="temp-wall" type="number" inputmode="numeric" placeholder="0 = 关闭"></div>
+      <button class="btn wide" onclick="saveAutomation()">保存定时与温度墙</button>
+      <p class="hint">温度墙触发时强制 5 档；填 0 关闭。场景命中时按场景档位运行。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>CPU / GPU 频率上限</h3><small>手动填四个上限值，不改调度器</small></div>
+      </div>
+      <div class="inp-row" style="border-top:0"><label>cpu0</label><input class="inp" id="freq-c0" type="number" inputmode="numeric" placeholder="1800000"></div>
+      <div class="inp-row"><label>cpu4</label><input class="inp" id="freq-c4" type="number" inputmode="numeric" placeholder="2200000"></div>
+      <div class="inp-row"><label>cpu7</label><input class="inp" id="freq-c7" type="number" inputmode="numeric" placeholder="2800000"></div>
+      <div class="inp-row"><label>gpu</label><input class="inp" id="freq-gpu" type="number" inputmode="numeric" placeholder="587000000"></div>
+      <button class="btn wide" onclick="applyFreqCustom()">应用频率上限</button>
+      <p class="hint" id="freq-info">当前：读取中…</p>
+      <p class="hint">CPU 单位 kHz，GPU 单位 Hz；只改上限，不动 governor。</p>
+    </div>
+<div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>温控与云控</h3><small>解锁频率 · 屏蔽系统降频策略</small></div>
+      </div>
+      <div class="lrow" style="border-top:0">
+        <div class="main"><div class="t">温控移除</div><div class="s">禁用整机热区并解锁调度节点</div></div>
+        <div class="sw" id="sw-thermal" onclick="toggle('thermal')"><i></i></div>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">云控屏蔽</div><div class="s">清空云控配置并锁定，防后台降频</div></div>
+        <div class="sw" id="sw-cloud" onclick="toggle('cloud')"><i></i></div>
+      </div>
+      <p class="hint">热区状态：<b id="thermal-zones">热区正常</b></p>
+    </div>
+  </section>
+<section class="page">
+    <div class="phead"><h2>触控与振感</h2><p>采样率 · 跟手 · 马达 · 频率上限</p></div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>触控优化</h3><small>960Hz 采样 + 4 档跟手，定时补写防回退</small></div>
+        <div class="sw" id="sw-touch" onclick="toggle('touch')"><i></i></div>
+      </div>
+      <div class="seg">
+        <button class="tm-btn" data-m="global" onclick="setTouchMode('global')">全局生效<small>所有界面</small></button>
+        <button class="tm-btn" data-m="per_app" onclick="setTouchMode('per_app')">指定应用<small>只对名单内</small></button>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">应用名单</div><div class="s" id="touch-apps-desc">未选择应用</div></div>
+        <button class="btn outline sm" onclick="pickTouchApps()">选择</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>振动增强</h3><small>增益 / 时长 / 升压三参数可调</small></div>
+        <div class="sw" id="sw-vib" onclick="toggle('vib')"><i></i></div>
+      </div>
+      <div class="inp-row"><label>增益 Gain</label><input class="inp" id="vib-gain" type="number" inputmode="numeric" placeholder="230"></div>
+      <div class="inp-row"><label>时长 Duration</label><input class="inp" id="vib-duration" type="number" inputmode="numeric" placeholder="18"></div>
+      <div class="inp-row"><label>升压 Vmax</label><input class="inp" id="vib-vmax" type="number" inputmode="numeric" placeholder="90"></div>
+      <button class="btn wide" onclick="setVibParams()">写入振动参数</button>
+      <div class="lrow">
+        <div class="main"><div class="t">陀螺仪增强</div><div class="s">游戏助手传感器插件常驻</div></div>
+        <div class="sw" id="sw-gyro" onclick="toggle('gyro')"><i></i></div>
+      </div>
+    </div>
+
+    
+  </section>
+<section class="page">
+    <div class="phead"><h2>网络与系统</h2><p>三网频段 · 连接增强 · 后台策略</p></div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>运营商信号</h3><small>频段优先级 + 重选门限，重启生效</small></div>
+      </div>
+      <div class="lrow" style="border-top:0">
+        <div class="main"><div class="t">电信增强</div><div class="s">n78 / n1 / n5 + B1 B3 B5</div></div>
+        <div class="sw" id="sw-net" onclick="toggle('net')"><i></i></div>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">移动增强</div><div class="s">n41 / n28 / n79 + B3 B8 B39 B41</div></div>
+        <div class="sw" id="sw-cmcc" onclick="toggle('cmcc')"><i></i></div>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">联通增强</div><div class="s">n1 / n78 / n8 + B1 B3 B8</div></div>
+        <div class="sw" id="sw-unicom" onclick="toggle('unicom')"><i></i></div>
+      </div>
+      <p class="hint">三家可同时开启，最后写入者在下一次开机时生效。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>连接与外设</h3><small>WiFi · 蓝牙 · 定位</small></div>
+      </div>
+      <div class="lrow" style="border-top:0">
+        <div class="main"><div class="t">WiFi 增强</div><div class="s">关省电休眠、双 WiFi 加速、TCP 低延迟</div></div>
+        <div class="sw" id="sw-wifi" onclick="toggle('wifi')"><i></i></div>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">蓝牙音质</div><div class="s" id="bt-desc">点击开启蓝牙高清编码</div></div>
+        <div class="sw" id="sw-bt" onclick="toggle('bt')"><i></i></div>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">导航定位</div><div class="s">AGPS + GNSS 全频原始测量</div></div>
+        <div class="sw" id="sw-nav" onclick="toggle('nav')"><i></i></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>系统策略</h3><small>保活 · 休眠 · 相机</small></div>
+      </div>
+      <div class="lrow" style="border-top:0">
+        <div class="main"><div class="t">后台保活</div><div class="s">关闭应用待机，减少后台被杀</div></div>
+        <div class="sw" id="sw-bak" onclick="toggle('bak')"><i></i></div>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">深度休眠省电</div><div class="s">缩短 doze 进入时间，待机更省电</div></div>
+        <div class="sw" id="sw-deep" onclick="toggle('deep')"><i></i></div>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t" id="cam-name">相机画质增强</div><div class="s">降噪与自适应快门参数</div></div>
+        <div class="sw" id="sw-cam" onclick="toggle('cam')"><i></i></div>
+      </div>
+    </div>
+  </section>
+<section class="page">
+    <div class="phead"><h2>游戏与显示</h2><p>游戏面板 · 亮度守护 · 手电超频</p></div>
+    <div class="card" style="padding:6px">
+      <iframe id="game-frame" src="game.html" onload="fitGame();pushTheme()"></iframe>
+    </div>
+  
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>亮度增强</h3><small id="lum-status">读取中…</small></div>
+        <span class="card-note" id="lum-state">--</span>
+      </div>
+      <div class="inp-row" style="border-top:0"><label>触发阈值</label><input class="inp" id="lum-th" type="number" inputmode="numeric" placeholder="1900"></div>
+      <div class="inp-row"><label>峰值亮度</label><input class="inp" id="lum-peak" type="number" inputmode="numeric" placeholder="2300"></div>
+      <div class="inp-row"><label>过渡步数</label><input class="inp" id="lum-steps" type="number" inputmode="numeric" placeholder="50"></div>
+      <div class="lrow">
+        <div class="main"><div class="t">自动亮度休眠</div><div class="s">系统自动亮度开启时不强行提亮</div></div>
+        <div class="sw" id="lum-auto" onclick="toggleAutoSleep()"><i></i></div>
+      </div>
+      <div class="btnline">
+        <button class="btn" onclick="saveLum()">保存并生效</button>
+        <button class="btn outline" onclick="lumBoost()">一键提升</button>
+      </div>
+      <button class="btn outline wide" onclick="pickBlack()">黑名单应用（前台不提亮）</button>
+      <p class="hint">峰值过高会加速 OLED 老化，按需调低。</p>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>手电筒超频</h3><small id="torch-name">后置主手电筒 · 已关闭</small></div>
+        <div class="sw" id="torch-bulb" onclick="torchToggle()"><i></i></div>
+      </div>
+      <div class="inp-row" style="border-top:0"><label id="torch-bri">亮度调节：550</label></div>
+      <input class="inp" id="torch-range" type="range" min="0" max="600" value="550" step="10"
+             style="width:100%;height:34px;padding:0;border:0;background:transparent"
+             oninput="torchPreview(this.value)" onchange="torchSliderApply(this.value)">
+      <div class="levels" style="margin-top:2px">
+        <button class="lv" onclick="torchStep(-50)">-50</button>
+        <button class="lv" onclick="torchStep(50)">+50</button>
+        <button class="lv" onclick="torchStep(-10)">-10</button>
+        <button class="lv" onclick="torchStep(10)">+10</button>
+      </div>
+      <div class="lrow">
+        <div class="main"><div class="t">锁定翻页</div><div class="s">调节时避免误触滑动切页</div></div>
+        <div class="sw" id="torch-lock" onclick="toggleTorchLock()"><i></i></div>
+      </div>
+    </div>
+  
+</section>
+<section class="page">
+    <div class="phead"><h2>日志</h2><p>运行时输出与诊断信息</p></div>
+
+    <div class="card">
+      <div class="card-head">
+        <span class="dot"></span>
+        <div class="card-title"><h3>运行时输出</h3><small>最近一次操作与执行结果</small></div>
+      </div>
+      <div id="status">就绪 · 开关即时生效</div>
+      <div id="run-text"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title"><h3>诊断日志</h3><small>开关状态、节点读数、挂载与属性</small></div>
+        <span class="card-note"><b id="log-count">0</b> 行</span>
+      </div>
+      <div class="logbar">
+        <button class="btn sm" onclick="genLogInline()">生成</button>
+        <button class="btn outline sm" onclick="copyLogText()">复制</button>
+        <button class="btn ghost sm" onclick="clearLogText()">清空</button>
+        <button class="btn outline sm" onclick="nodeCheck()">节点自检</button>
+      </div>
+      <div class="log-meta" id="log-meta"><span class="lm">尚未采集</span></div>
+      <pre id="log-view">点击「生成」采集当前设备状态。</pre>
+    </div>
+  </section>
+
+</div>
+
+<div id="sheet" onclick="closeSheet(event)">
+  <div class="sheet-inner" onclick="event.stopPropagation()">
+    <h3 id="sheet-title"></h3>
+    <div id="sheet-body"></div>
+    <div class="sheet-close" onclick="closeSheet()">关闭</div>
+  </div>
+</div>
+
+<script>
+function pushTheme(){
+  try{
+    var f=document.getElementById("game-frame");
+    if(f&&f.contentWindow) f.contentWindow.postMessage({theme:document.documentElement.classList.contains("light")?"light":"dark"},"*");
+  }catch(e){}
+}
+function fitGame(){
+  try{
+    var f=document.getElementById("game-frame"),h=0;
+    if(!f||!f.contentDocument) return;
+    var ch=f.contentDocument.body.children;
+    for(var i=0;i<ch.length;i++){var r=ch[i].getBoundingClientRect();if(r.bottom>h)h=r.bottom;}
+    f.style.minHeight="0px";
+    f.style.height=(Math.ceil(h)+6)+"px";
+  }catch(e){}
+}
+window.addEventListener("message",function(e){
+  if(e&&e.data&&typeof e.data.gameHeight==="number"){var f=document.getElementById("game-frame");if(f)f.style.height=(e.data.gameHeight+6)+"px";}
+});
+</script>
+<script src="html2canvas.min.js"></script>
+<script>
+
+  const MOD = "/data/adb/modules/redmagic_11_combo";
+  const STATE = "/data/adb/redmagic_11_combo";
+  const FILES = {
+    cam: {
+      on:  [["vendor/etc/camera/camxoverridesettings.txt", "vendor/etc/camera/camxoverridesettings.txt"],
+            ["vendor/etc/camera/mfnr_network_denoise_config.xml", "vendor/etc/camera/mfnr_network_denoise_config.xml"],
+            ["vendor/etc/camera/adaptive_shutter_config.xml", "vendor/etc/camera/adaptive_shutter_config.xml"]],
+      off: [["orig/camxoverridesettings.txt", "vendor/etc/camera/camxoverridesettings.txt"],
+            ["orig/mfnr_network_denoise_config.xml", "vendor/etc/camera/mfnr_network_denoise_config.xml"],
+            ["orig/adaptive_shutter_config.xml", "vendor/etc/camera/adaptive_shutter_config.xml"]],
+      restart: "setprop ctl.restart vendor.camera-provider-2-7"
+    }
+  };
+  const QB = "/sys/class/qcom-battery";
+  const TP = "/proc/touchscreen";
+  const VB = "/sys/class/leds/vibrator";
+  const VB2 = "/sys/class/leds/zte_vibrator";
+
+  async function run(cmd) {
+    const api = window.__ksuApi || window.ksu || window.ksud;
+    if (!api || typeof api.exec !== "function") {
+      return { errno: -1, stdout: "", stderr: "KSU WebUI API 不可用" };
+    }
+    // 超时保护：exec 挂住（安装更新时 ksud 占用）最多等 20 秒
+    const timeout = new Promise(function (res) {
+      setTimeout(function () { res({ errno: -2, stdout: "", stderr: "exec 超时" }); }, 20000);
+    });
+    try {
+      const raced = await Promise.race([_execOnce(api, cmd), timeout]);
+      return raced;
+    } catch (e) {
+      return { errno: -1, stdout: "", stderr: String(e) };
+    }
+  }
+
+  async function _execOnce(api, cmd) {
+    try {
+      const r = api.exec(cmd);
+      // ① Promise 形式（标准 KernelSU）
+      if (r && typeof r.then === "function") {
+        const v = await r;
+        if (v && typeof v === "object") return { errno: v.errno ?? 0, stdout: v.stdout ?? "", stderr: v.stderr ?? "" };
+        return { errno: 0, stdout: String(v ?? ""), stderr: "" };
+      }
+      // ② 对象形式 {errno, stdout}
+      if (r && typeof r === "object") {
+        return { errno: r.errno ?? 0, stdout: r.stdout ?? "", stderr: r.stderr ?? "" };
+      }
+      // ③ 同步返回 stdout（KSU-NULL 定制管理器：ksu.exec 直接返回字符串）
+      return { errno: 0, stdout: r === undefined || r === null ? "" : String(r), stderr: "" };
+    } catch (e) {
+      return { errno: -1, stdout: "", stderr: String(e) };
+    }
+  }
+
+  function setStatus(t) { const el = document.getElementById("status"); if (el) el.textContent = t; scheduleSync(); }
+
+  let _toastTimer = null;
+  function toast(msg, bad) {
+    let el = document.getElementById("toast");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "toast";
+      el.className = "toast";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.className = "toast show" + (bad ? " bad" : "");
+    if (_toastTimer) clearTimeout(_toastTimer);
+    _toastTimer = setTimeout(function () { el.className = "toast"; }, 3200);
+  }
+
+  function showAlert(msg, bad) {
+    let el = document.getElementById("alert");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "alert";
+      el.className = "alert";
+      document.body.appendChild(el);
+    }
+    el.textContent = msg;
+    el.className = "alert show" + (bad ? " bad" : "");
+  }
+
+  function hideAlert() {
+    const el = document.getElementById("alert");
+    if (el) el.className = "alert";
+  }
+
+  function applySwitch(id, on) {
+    updateTag(id, on);
+    const el = document.getElementById("sw-" + id);
+    if (el) el.classList.toggle("on", !!on);
+  }
+
+  function updateRing() {
+    var on = 0, total = 0;
+    document.querySelectorAll(".ftag").forEach(function (el) {
+      if (el.dataset.k === "bat" || el.style.display === "none") return;
+      total++;
+      if (el.classList.contains("on")) on++;
+    });
+    var pct = total ? Math.round(on / total * 100) : 0;
+    var bar = document.getElementById("ring-bar");
+    if (bar) bar.style.width = pct + "%";
+    var num = document.getElementById("ring-num"); if (num) num.textContent = String(on);
+    var sub = document.getElementById("ring-sub"); if (sub) sub.textContent = "/ " + total + " 项增强";
+  }
+
+  function parseKV(text) {
+    const M = {};
+    (text || "").split("\n").forEach(function (l) {
+      const i = l.indexOf("=");
+      if (i > 0) M[l.slice(0, i).trim()] = l.slice(i + 1).trim();
+    });
+    return M;
+  }
+
+  async function cfgDump() {
+    let M = parseKV((await run("sh " + MOD + "/cfg.sh dump 2>/dev/null")).stdout);
+    if (Object.keys(M).some(function (k) { return M[k]; })) return M;
+    // 兜底 1：模块目录 settings.txt
+    M = parseKV((await run("cat " + MOD + "/settings.txt 2>/dev/null")).stdout);
+    if (Object.keys(M).some(function (k) { return M[k]; })) return M;
+    // 兜底 2：直接读运行目录
+    const KEYS = ["cam","chg","sep","net","cmcc","unicom","wifi","bt","vib","fan","fankeep","pump","bak","gyro","nav","deep","touch","cloud","thermal","lum","bat","fan_level","pump_level","charge_threshold","vib_gain","vib_duration","vib_vmax","touch_mode","perf_custom","lum_th","lum_peak","lum_steps","thermal_zones","touch_apps"];
+    let cmd = "for k in " + KEYS.join(" ") + "; do cat " + STATE + "/$k 2>/dev/null | tr -d '\n' | tr '\n' ','; printf '|'; done";
+    const r3 = await run(cmd);
+    const parts = (r3.stdout || "").split("|");
+    KEYS.forEach(function (k, i) { M[k] = (parts[i] || "").replace(/,$/, "").trim(); });
+    return M;
+  }
+
+  async function persist(key, val) {
+    await run("sh " + MOD + "/cfg.sh set " + key + " '" + String(val) + "' 2>/dev/null");
+    const chk = await run("cat " + STATE + "/" + key + " 2>/dev/null");
+    if ((chk.stdout || "").trim() !== String(val)) {
+      await run("mkdir -p " + STATE + " 2>/dev/null; echo '" + String(val) + "' > " + STATE + "/" + key + " 2>/dev/null");
+    }
+    scheduleSync();
+  }
+
+  let _syncTimer = null;
+  function scheduleSync() {
+    if (_syncTimer) clearTimeout(_syncTimer);
+    _syncTimer = setTimeout(function () {
+      _syncTimer = null;
+      run("sh " + MOD + "/cfg.sh sync 2>/dev/null; sh " + MOD + "/desc.sh 2>/dev/null");
+    }, 500);
+  }
+
+  async function readState(id) {
+    const r = await run("cat " + STATE + "/" + id + " 2>/dev/null");
+    return (r.stdout || "").trim() === "1";
+  }
+
+  const STATE_KEYS = ["cam","chg","sep","net","cmcc","unicom","wifi","bt","vib","fan","fan_auto","fankeep","pump","bak","gyro","nav","deep","touch","cloud","thermal","lum","bat","fan_level","pump_level","charge_threshold","vib_gain","vib_duration","vib_vmax","touch_mode","touch_apps","perf_custom","lum_th","lum_peak","lum_steps","fan_screen_keep","sep_auto","thermal_zones","ui_skin","ui_theme","fan_auto_level","fan_auto_temp","fan_t3","fan_t4","fan_t5","fan_hyst","scene_auto","scene_apps","scene_fan","scene_touch","night_quiet","night_start","night_end","temp_wall","bat_limit"];
+
+  async function readStateAll() {
+    // 逐个分批直读运行目录：单次 exec 输出过长会被桥接层截断（只留尾部），
+    // 这里每 6 个键一批，保证每批输出都很短，任何管理器的 exec 都不会丢数据。
+    const M = {};
+    for (let i = 0; i < STATE_KEYS.length; i += 6) {
+      const chunk = STATE_KEYS.slice(i, i + 6);
+      const r = await run("for k in " + chunk.join(" ") + "; do cat " + STATE + "/$k 2>/dev/null | tr '\\n' ','; printf '|'; done");
+      const parts = (r.stdout || "").split("|");
+      chunk.forEach(function (k, j) { M[k] = (parts[j] || "").replace(/,$/, "").trim(); });
+    }
+    if (!STATE_KEYS.some(function (k) { return M[k]; })) {
+      const t = await run("cat " + MOD + "/settings.txt 2>/dev/null");
+      (t.stdout || "").split("\n").forEach(function (l) {
+        const i = l.indexOf("=");
+        if (i > 0) {
+          const k = l.slice(0, i).trim(), v = l.slice(i + 1).trim();
+          if (STATE_KEYS.indexOf(k) >= 0) M[k] = v;
+        }
+      });
+    }
+    return M;
+  }
+
+  async function refreshAll() {
+    const KEYS = ["cam","chg","sep","net","cmcc","unicom","wifi","bt","vib","fan","fankeep","pump","bak","gyro","nav","deep","touch","cloud","thermal","scene_auto","night_quiet"];
+    const M = await readStateAll();
+    const rNode = await run("[ -e /proc/driver/micropump/enable ] && printf 1 || printf 0");
+    const rVer = await run("grep '^version=' " + MOD + "/module.prop 2>/dev/null | cut -d= -f2");
+    const hasPump = (rNode.stdout || "").trim() === "1";
+    const ver = (rVer.stdout || "").trim();
+    KEYS.forEach(function (k) { applySwitch(k, (M[k] || "") === "1"); });
+    const fanLv = parseInt(M.fan_level || "", 10);
+    const pumpLv = parseInt(M.pump_level || "", 10);
+    HAS_PUMP = hasPump;
+    const card = document.getElementById("pump-card");
+    if (card) card.style.display = hasPump ? "" : "none";
+    const ptag = document.querySelector('.ftag[data-k="pump"]');
+    if (ptag) ptag.style.display = hasPump ? "" : "none";
+    highlightFan(isNaN(fanLv) ? 0 : fanLv);
+    highlightPump(hasPump ? (isNaN(pumpLv) ? 0 : pumpLv) : 0);
+    updateRing();
+    const tm = (M.touch_mode || "").trim() || "global";
+    document.querySelectorAll(".tm-btn").forEach(function (b) { b.classList.toggle("on", b.dataset.m === tm); });
+    const apps = (M.touch_apps || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean);
+    const tad = document.getElementById("touch-apps-desc");
+    if (tad) tad.textContent = apps.length ? ("已选 " + apps.length + " 个应用") : "未选择应用，指定应用模式下不生效";
+    const th = (M.charge_threshold || "").trim();
+    const te = document.getElementById("sep-threshold");
+    if (te && th && !te.value) te.value = th;
+    const setVal = function (id, v) { const e = document.getElementById(id); if (e && !e.value) e.value = v; };
+    setVal("vib-gain", (M.vib_gain || "").trim() || "230");
+    setVal("vib-duration", (M.vib_duration || "").trim() || "18");
+    setVal("vib-vmax", (M.vib_vmax || "").trim() || "90");
+    const fr = document.getElementById("fan-rpm");
+    if (fr) fr.textContent = (!isNaN(fanLv) && fanLv > 0) ? (fanLv + " / 6 档") : "未启用";
+    const soft = function (id, v) { const e = document.getElementById(id); if (e && !e.value) e.value = v; };
+    soft("fan-t3", (M.fan_t3 || "").trim() || "30");
+    soft("fan-t4", (M.fan_t4 || "").trim() || "35");
+    soft("fan-t5", (M.fan_t5 || "").trim() || "40");
+    soft("fan-hyst", (M.fan_hyst || "").trim() || "2");
+    soft("night-start", (M.night_start || "").trim() || "23:00");
+    soft("night-end", (M.night_end || "").trim() || "07:00");
+    if (M.temp_wall && M.temp_wall !== "0") soft("temp-wall", M.temp_wall);
+    const sapps = (M.scene_apps || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean);
+    const sd = document.getElementById("scene-desc");
+    if (sd) sd.textContent = sapps.length ? ("已选 " + sapps.length + " 个应用 · " + ((M.scene_fan || "5").trim()) + " 档") : "未选择应用";
+    const bl = (M.bat_limit || "").trim();
+    document.querySelectorAll("[data-b]").forEach(function (b) { b.classList.toggle("on", (b.dataset.b || "0") === (bl || "0")); });
+    const tz = (M.thermal_zones || "").split(",").filter(Boolean).length;
+    const tze = document.getElementById("thermal-zones");
+    if (tze) tze.textContent = tz > 0 ? ("已禁用 " + tz + " 个热区") : "热区正常";
+    if (ver) {
+      const vh = document.getElementById("ver-head");
+      if (vh) vh.textContent = ver;
+      const dv = document.getElementById("drawer-ver");
+      if (dv) dv.textContent = ver;
+      const va = document.getElementById("ver-about");
+      if (va) va.textContent = ver + " · 红魔11 系列";
+    }
+    applySwitch("fan_auto", (M.fan_auto || "") === "1");
+    const ft = await run("cat /sys/class/power_supply/battery/temp 2>/dev/null");
+    const tv = parseInt((ft.stdout || "").trim(), 10);
+    const fte = document.getElementById("fan-temp");
+    if (fte) fte.textContent = isNaN(tv) ? "读取中" : (tv / 10).toFixed(1) + " °C";
+    const fal = document.getElementById("fan-auto-lv");
+    if (fal) fal.textContent = (M.fan_auto_level || "").trim() || (fanLv > 0 ? String(fanLv) : "待机");
+    applySwitch("lum", (M.lum || "") === "1");
+    lumRefresh();
+    if (!lumTimer) lumTimer = setInterval(lumRefresh, 8000);
+    torchRefresh();
+    if (!torchTimer) torchTimer = setInterval(torchRefresh, 10000);
+    refreshFreqInfo();
+    BAT_ON = (M.bat || "") === "1";
+    const swb = document.getElementById("sw-bat");
+    if (swb) swb.classList.toggle("on", BAT_ON);
+    batRefresh();
+    if (!batTimer) batTimer = setInterval(batRefresh, 15000);
+    scheduleSync();
+    setTimeout(async function () {
+      try {
+        const btr = await run("sh " + MOD + "/bttool.sh status 2>&1");
+        const bd = document.getElementById("bt-desc");
+        if (bd) {
+          const lines = (btr.stdout || "").trim().split("\n").filter(function (l) { return l.trim(); });
+          bd.textContent = lines.length ? lines.join(" · ") : "点击开启蓝牙音质增强";
+        }
+      } catch (e) {}
+    }, 900);
+  }
+
+  function highlightFan(lv) {
+    document.querySelectorAll("#fan-levels .lv").forEach(el => {
+      el.classList.toggle("on", String(el.dataset.lv) === String(lv));
+    });
+  }
+
+  // 设置风扇档位（1-5 官方档 + 6 狂暴档；fan_speed_level 是 444 只读，必须先 chmod）
+  async function setFan(lv) {
+    if (!(lv >= 1 && lv <= 6)) return;
+    const FAN = "/sys/kernel/fan";
+    const cmds = [
+      "chmod 644 " + FAN + "/fan_speed_level 2>/dev/null || true",
+      "echo " + lv + " > " + FAN + "/fan_speed_level 2>/dev/null || true",
+      "chmod 444 " + FAN + "/fan_speed_level 2>/dev/null || true",
+      "chmod 644 " + FAN + "/fan_enable 2>/dev/null || true",
+      "echo 1 > " + FAN + "/fan_enable 2>/dev/null || true",
+      "echo 1 > " + STATE + "/fan",
+      "echo " + lv + " > " + STATE + "/fan_level"
+    ];
+    const r = await run(cmds.join(" && "));
+    await persist("fan", 1);
+    await persist("fan_level", lv);
+    highlightFan(lv);
+    applySwitch("fan", true);
+    updateRing();
+    // 读取实际档位与转速，验证是否突破
+    const r2 = await run("cat " + FAN + "/fan_speed_level 2>/dev/null");
+    const act = (r2.stdout || "").trim();
+    const r3 = await run("cat " + FAN + "/fan_speed_count 2>/dev/null");
+    const rpm = (r3.stdout || "").trim();
+    let msg = "风扇档位 → " + lv + " 档" + (r.errno === 0 ? " ✓" : "（返回 " + r.errno + "）");
+    if (act) msg += " · 实际 " + act;
+    if (rpm) msg += " · " + rpm + " RPM";
+    if (lv === 6 && act && act !== "6") msg += "（驱动已限制档位）";
+    setStatus(msg);
+  }
+
+  // ===== 液冷控制（微泵，仅红魔11 Pro+/S Pro+ 有节点）=====
+  const PUMP_SPEED = { 1: 40, 2: 60, 3: 80, 4: 90 };
+  const PUMP = "/proc/driver/micropump";
+
+  function highlightPump(lv) {
+    document.querySelectorAll("#pump-levels .lv").forEach(el => {
+      el.classList.toggle("on", String(el.dataset.lv) === String(lv));
+    });
+  }
+
+  let HAS_PUMP = false;
+  async function setPump(lv) {
+    if (!HAS_PUMP) { setStatus("本机没有液冷微泵，此功能不可用"); return; }
+    if (!(lv >= 1 && lv <= 4)) return;
+    const sp = PUMP_SPEED[lv];
+    const cmds = [
+      "chmod 644 " + PUMP + "/enable " + PUMP + "/freq " + PUMP + "/speed 2>/dev/null || true",
+      "echo 1 > " + PUMP + "/enable 2>/dev/null || true",
+      "echo 4 > " + PUMP + "/freq 2>/dev/null || true",
+      "echo " + sp + " > " + PUMP + "/speed 2>/dev/null || true",
+      "chmod 444 " + PUMP + "/speed 2>/dev/null || true",
+      "echo 1 > " + STATE + "/pump",
+      "echo " + lv + " > " + STATE + "/pump_level"
+    ];
+    const r = await run(cmds.join(" && "));
+    await persist("pump", 1);
+    await persist("pump_level", lv);
+    highlightPump(lv);
+    applySwitch("pump", true);
+    updateRing();
+    setStatus("液冷档位 → " + lv + " 档（" + sp + "）" + (r.errno === 0 ? " ✓" : "（返回 " + r.errno + "）"));
+  }
+
+  // 充电分离阈值设定（20-100%）
+  async function setSepThreshold() {
+    const el = document.getElementById("sep-threshold");
+    const raw = (el.value || "").trim();
+    if (!/^\d+$/.test(raw)) { setStatus("阈值请填 20-100 的整数"); return; }
+    const v = parseInt(raw, 10);
+    if (v < 20 || v > 100) { setStatus("阈值必须在 20-100 之间"); return; }
+    const r = await run("mkdir -p " + STATE + " && echo " + v + " > " + STATE + "/charge_threshold");
+    await persist("charge_threshold", v);
+    el.value = String(v);
+    setStatus("充电分离阈值已设为 " + v + "%（达到后停止充电）" + (r.errno === 0 ? " ✓" : ""));
+  }
+
+  async function toggle(id) {
+    if (id === "pump" && !HAS_PUMP) { setStatus("本机未检测到液冷节点，功能不可用"); return; }
+    const el = document.getElementById("sw-" + id);
+    if (el) el.classList.add("busy");
+    try {
+      const cur = await readState(id);
+      const next = !cur;
+      const cmds = ["mkdir -p " + STATE];
+
+      if (id === "net" || id === "cmcc" || id === "unicom") {
+        // 三大运营商信号增强（写 persist.vendor.radio.*，重启生效；三选一，最后开启者生效）
+        const factory = {
+          "band_priority_5g": "n78,n41,n1",
+          "band_priority_lte": "B3,B1,B5",
+          "cell_reselect_hyst": "2",
+          "nr_resel_min_rssi": "-118",
+          "nr_serving_cell_threshold": "-110",
+          "lte_nr_handover_hysteresis": "6",
+          "signal_meas_period": "5000",
+          "lte_rx_gain_offset": "2"
+        };
+        const PRESETS = {
+          net: {
+            "band_priority_5g": "n78,n1,n5",
+            "band_priority_lte": "B1,B3,B5",
+            "cell_reselect_hyst": "1",
+            "nr_resel_min_rssi": "-120",
+            "nr_serving_cell_threshold": "-112",
+            "lte_nr_handover_hysteresis": "4",
+            "signal_meas_period": "3000",
+            "lte_rx_gain_offset": "3"
+          },
+          cmcc: {
+            "band_priority_5g": "n41,n28,n79,n1",
+            "band_priority_lte": "B3,B8,B39,B41,B40",
+            "cell_reselect_hyst": "1",
+            "nr_resel_min_rssi": "-122",
+            "nr_serving_cell_threshold": "-114",
+            "lte_nr_handover_hysteresis": "4",
+            "signal_meas_period": "3000",
+            "lte_rx_gain_offset": "3"
+          },
+          unicom: {
+            "band_priority_5g": "n1,n78,n8",
+            "band_priority_lte": "B1,B3,B8",
+            "cell_reselect_hyst": "1",
+            "nr_resel_min_rssi": "-122",
+            "nr_serving_cell_threshold": "-114",
+            "lte_nr_handover_hysteresis": "4",
+            "signal_meas_period": "3000",
+            "lte_rx_gain_offset": "3"
+          }
+        };
+        const props = next ? PRESETS[id] : factory;
+        for (const [k, v] of Object.entries(props)) {
+          cmds.push("resetprop -n persist.vendor.radio." + k + " '" + v + "' 2>/dev/null || true");
+        }
+        if (next) {
+          cmds.push("echo 3 > /proc/sys/net/ipv4/tcp_fastopen 2>/dev/null || true");
+          cmds.push("echo 1 > /proc/sys/net/ipv4/tcp_low_latency 2>/dev/null || true");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "wifi") {
+        // WiFi 增强：关闭省电休眠、降低扫描干扰、开启双 WiFi 加速（settings 持久化）
+        const vals = next ? {
+          "wifi_power_save": "0",
+          "wifi_sleep_policy": "0",
+          "wifi_scan_interval": "60000",
+          "wifi_background_scan_interval": "120000",
+          "zte_acceleration_2wifi": "1"
+        } : {
+          "wifi_power_save": "120",
+          "wifi_sleep_policy": "2",
+          "wifi_scan_interval": "30000",
+          "wifi_background_scan_interval": "60000",
+          "zte_acceleration_2wifi": "0"
+        };
+        for (const [k, v] of Object.entries(vals)) {
+          cmds.push("settings put global " + k + " " + v + " 2>/dev/null || true");
+        }
+        if (next) {
+          cmds.push("echo 3 > /proc/sys/net/ipv4/tcp_fastopen 2>/dev/null || true");
+          cmds.push("echo 1 > /proc/sys/net/ipv4/tcp_low_latency 2>/dev/null || true");
+          cmds.push("echo 1 > /proc/sys/net/ipv4/tcp_moderate_rcvbuf 2>/dev/null || true");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "vib") {
+        if (next) {
+          cmds.push("mkdir -p " + STATE);
+          cmds.push("g=$(cat " + STATE + "/vib_gain 2>/dev/null); case \"$g\" in ''|*[!0-9]*) g=230;; esac; printf '0x%x' $g > " + VB + "/gain 2>/dev/null || true; printf '0x%x' $g > " + VB2 + "/gain 2>/dev/null || true");
+          cmds.push("v=$(cat " + STATE + "/vib_vmax 2>/dev/null); case \"$v\" in ''|*[!0-9]*) v=90;; esac; printf '0x%x' $v > " + VB + "/vmax 2>/dev/null || true; printf '0x%x' $v > " + VB2 + "/vmax 2>/dev/null || true");
+          cmds.push("d=$(cat " + STATE + "/vib_duration 2>/dev/null); case \"$d\" in ''|*[!0-9]*) d=18;; esac; echo $d > " + VB + "/duration 2>/dev/null || true; printf '0x%x' $d > " + VB + "/duration_aw 2>/dev/null || true");
+          cmds.push("echo 0x01 > " + VB + "/cont_brk_time 2>/dev/null || true");
+          cmds.push("echo 0x03 > " + VB + "/cont_wait_num 2>/dev/null || true");
+          cmds.push("settings put global vibration_strength_mode 2 2>/dev/null || true");
+          cmds.push("settings put global game_assist_trigger_space_vibrate 1 2>/dev/null || true");
+          cmds.push("settings put global nubia_4d_shocks 'com.tencent.tmgp.sgame,com.tencent.tmgp.pubgmhd,com.netease.hyxd,com.tencent.lolm,com.mobile.legends,com.miHoYo.Yuanshen,com.tencent.tmgp.speedmobile,' 2>/dev/null || true");
+          cmds.push("settings put global tencent_game_haptic_state 1 2>/dev/null || true");
+          cmds.push("settings put global game_assist_enable_plugin_vibrate 1 2>/dev/null || true");
+          cmds.push("settings put system haptic_feedback_enabled 1 2>/dev/null || true");
+        } else {
+          cmds.push("for n in gain duration duration_aw vmax; do [ -f " + STATE + "/.vibe_$n ] && cat " + STATE + "/.vibe_$n > " + VB + "/$n 2>/dev/null; done");
+          cmds.push("settings put global game_assist_trigger_space_vibrate 0 2>/dev/null || true");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "fan") {
+        // 风力全开：风扇档位 + 开关（fan_speed_level 是 444 只读，需 chmod）
+        const FAN = "/sys/kernel/fan";
+        if (next) {
+          const lvr = await run("cat " + STATE + "/fan_level 2>/dev/null");
+          const lv = parseInt((lvr.stdout || "").trim(), 10);
+          const useLv = (lv >= 1 && lv <= 5) ? lv : 5;
+          cmds.push("chmod 644 " + FAN + "/fan_speed_level 2>/dev/null || true");
+          cmds.push("echo " + useLv + " > " + FAN + "/fan_speed_level 2>/dev/null || true");
+          cmds.push("chmod 444 " + FAN + "/fan_speed_level 2>/dev/null || true");
+          cmds.push("chmod 644 " + FAN + "/fan_enable 2>/dev/null || true");
+          cmds.push("echo 1 > " + FAN + "/fan_enable 2>/dev/null || true");
+          highlightFan(useLv);
+        } else {
+          cmds.push("chmod 644 " + FAN + "/fan_enable 2>/dev/null || true");
+          cmds.push("echo 0 > " + FAN + "/fan_enable 2>/dev/null || true");
+          highlightFan(0);
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "fan_auto") {
+        // 智能风扇：由 service.sh 每 5 秒读电池温度自动调档
+        cmds.push("mkdir -p " + STATE);
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/fan_auto");
+      } else if (id === "fankeep") {
+        // 熄屏保持风扇：后台守护每 3 秒保活（service.sh 里循环）
+        const FANK = "/sys/kernel/fan";
+        if (next) {
+          cmds.push("echo 1 > " + STATE + "/fan_screen_keep");
+          cmds.push("echo 1 > " + STATE + "/fan");
+          const lvr = await run("cat " + STATE + "/fan_level 2>/dev/null");
+          const lv = parseInt((lvr.stdout || "").trim(), 10);
+          const useLv = (lv >= 1 && lv <= 5) ? lv : 5;
+          cmds.push("chmod 644 " + FANK + "/fan_speed_level 2>/dev/null || true");
+          cmds.push("echo " + useLv + " > " + FANK + "/fan_speed_level 2>/dev/null || true");
+          cmds.push("chmod 444 " + FANK + "/fan_speed_level 2>/dev/null || true");
+          cmds.push("chmod 644 " + FANK + "/fan_enable 2>/dev/null || true");
+          cmds.push("echo 1 > " + FANK + "/fan_enable 2>/dev/null || true");
+          applySwitch("fan", true);
+          highlightFan(useLv);
+        } else {
+          cmds.push("rm -f " + STATE + "/fan_screen_keep");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "bak") {
+        cmds.push("settings put global app_standby_enabled " + (next ? 0 : 1) + " 2>/dev/null || true");
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "gyro") {
+        cmds.push("settings put global game_assist_enable_plugin_sensor_operation " + (next ? 1 : 0) + " 2>/dev/null || true");
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "nav") {
+        cmds.push("settings put global assisted_gps_enabled " + (next ? 1 : 0) + " 2>/dev/null || true");
+        cmds.push("settings put global enable_gnss_raw_meas_full_tracking " + (next ? 1 : 0) + " 2>/dev/null || true");
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "deep") {
+        if (next) {
+          // 激进 Doze：灭屏 30 秒进 light doze，60 秒进 deep doze
+          cmds.push("settings put global device_idle_constants 'light_after_inactive_to=30000,light_pre_idle_to=60000,light_idle_to=1800000,light_idle_maintenance_window=60000,light_idle_maintenance_max_budget=30000,inactive_to=60000,idle_after_inactive_to=60000,idle_pending_to=60000,idle_to=3600000' 2>/dev/null || true");
+          cmds.push("dumpsys deviceidle force-idle 2>/dev/null || true");
+          cmds.push("echo 1 > " + STATE + "/deep");
+        } else {
+          cmds.push("settings delete global device_idle_constants 2>/dev/null || true");
+          cmds.push("dumpsys deviceidle unforce 2>/dev/null || true");
+          cmds.push("echo 0 > " + STATE + "/deep");
+        }
+      } else if (id === "lum") {
+        if (next) {
+          cmds.push("nohup " + LUM + " daemon > /dev/null 2>&1 & sleep 1");
+          cmds.push("echo 1 > " + STATE + "/lum");
+        } else {
+          cmds.push("pkill -f 'luminpro daemon' 2>/dev/null || true");
+          cmds.push("echo 0 > " + STATE + "/lum");
+        }
+      } else if (id === "bt") {
+        cmds.push("sh " + MOD + "/bttool.sh " + (next ? "on" : "off") + " 2>&1 || true");
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "sep") {
+        if (next) {
+          cmds.push("mkdir -p " + STATE);
+          cmds.push("th=$(cat " + STATE + "/charge_threshold 2>/dev/null); case \"$th\" in ''|*[!0-9]*) th=100;; esac; echo $th > " + STATE + "/charge_threshold");
+        } else {
+          cmds.push("settings put global charge_separation_switch 0 2>/dev/null || true");
+          cmds.push("rm -f " + STATE + "/sep_auto");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "pump") {
+        // 液冷控制：微泵开关 + 档位（仅 Pro+/S Pro+ 有节点）
+        if (next) {
+          cmds.push("chmod 644 " + PUMP + "/enable " + PUMP + "/freq " + PUMP + "/speed 2>/dev/null || true");
+          cmds.push("echo 1 > " + PUMP + "/enable 2>/dev/null || true");
+          cmds.push("echo 4 > " + PUMP + "/freq 2>/dev/null || true");
+          const lvr = await run("cat " + STATE + "/pump_level 2>/dev/null");
+          const lv = parseInt((lvr.stdout || "").trim(), 10);
+          const useLv = (lv >= 1 && lv <= 4) ? lv : 4;
+          cmds.push("echo " + PUMP_SPEED[useLv] + " > " + PUMP + "/speed 2>/dev/null || true");
+          cmds.push("chmod 444 " + PUMP + "/speed 2>/dev/null || true");
+          highlightPump(useLv);
+        } else {
+          cmds.push("chmod 644 " + PUMP + "/enable 2>/dev/null || true");
+          cmds.push("echo 0 > " + PUMP + "/enable 2>/dev/null || true");
+          highlightPump(0);
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "chg") {
+        if (next) {
+          cmds.push("echo 0 > " + QB + "/restrict_cur 2>/dev/null || true");
+          cmds.push("echo 0 > " + QB + "/restrict_chg 2>/dev/null || true");
+          cmds.push("echo 1 > " + QB + "/charging_enabled 2>/dev/null || true");
+          cmds.push("if [ -e " + QB + "/battery_charging_enabled ]; then echo 1 > " + QB + "/battery_charging_enabled; fi");
+          cmds.push("if [ -e " + QB + "/screen_is_on ]; then echo 0 > " + QB + "/screen_is_on; fi");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "cloud") {
+        if (next) {
+          cmds.push("for d in /data/system/cube /data/system/cube/SM8650 /data/system/cube/SM8650/app /data/system/cube/app /data/system/cubeusercfg; do [ -d \"$d\" ] || continue; chattr -i \"$d\" 2>/dev/null; for f in \"$d\"/*; do [ -e \"$f\" ] && { chattr -i \"$f\" 2>/dev/null; rm -rf \"$f\"; }; done; chattr +i \"$d\" 2>/dev/null; done");
+        } else {
+          cmds.push("for d in /data/system/cube /data/system/cube/SM8650 /data/system/cube/SM8650/app /data/system/cube/app /data/system/cubeusercfg; do [ -d \"$d\" ] && chattr -i \"$d\" 2>/dev/null; done");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "thermal") {
+        if (next) {
+          cmds.push("mkdir -p " + STATE);
+          cmds.push(": > " + STATE + "/thermal_zones");
+          cmds.push("for z in /sys/class/thermal/thermal_zone*; do t=$(cat \"$z/type\" 2>/dev/null); case \"$t\" in *bcl*|*ibat*|*gpuss*|*socd*|*aoss*|*pm8550*|*pm7325*|*cpu-*|*gpu*) if [ \"$(cat \"$z/mode\" 2>/dev/null)\" != disabled ]; then echo disabled > \"$z/mode\" 2>/dev/null && echo \"${z##*thermal_zone}\" >> " + STATE + "/thermal_zones; fi;; esac; done");
+          cmds.push("chmod 644 /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq 2>/dev/null || true");
+        } else {
+          cmds.push("if [ -f " + STATE + "/thermal_zones ]; then while read -r n; do [ -n \"$n\" ] && echo enabled > /sys/class/thermal/thermal_zone$n/mode 2>/dev/null; done < " + STATE + "/thermal_zones; fi");
+          cmds.push("rm -f " + STATE + "/thermal_zones");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else if (id === "touch") {
+        if (next) {
+          cmds.push("if [ -e " + TP + "/tp_report_rate ]; then echo 4 > " + TP + "/tp_report_rate; echo 1 > " + TP + "/play_game; echo 4 > " + TP + "/follow_hand_level; fi");
+          cmds.push("settings put system touch_sampling_rate 960 2>/dev/null || true");
+        } else {
+          cmds.push("if [ -e " + TP + "/tp_report_rate ]; then echo 1 > " + TP + "/tp_report_rate; echo 0 > " + TP + "/play_game; echo 1 > " + TP + "/follow_hand_level; fi");
+          cmds.push("settings delete system touch_sampling_rate 2>/dev/null || true");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+      } else {
+        const conf = FILES[id];
+        const list = next ? conf.on : conf.off;
+        for (const [src, dst] of list) {
+          cmds.push("mount -o bind " + MOD + "/" + src + " /" + dst + " 2>/dev/null || true");
+        }
+        cmds.push("echo " + (next ? 1 : 0) + " > " + STATE + "/" + id);
+        if (conf.restart) cmds.push(conf.restart + " 2>/dev/null || true");
+      }
+
+      const r = await run(cmds.join(" && "));
+      await persist(id, next ? 1 : 0);
+      applySwitch(id, next);
+      updateRing();
+      updateTag(id, next);
+      const okMsg = (next ? "已开启 " : "已关闭 ") + id + ((id === "net" || id === "cmcc" || id === "unicom") ? " · 重启手机后生效" : "");
+      if (r.errno === 0) { toast(okMsg + " ✓"); setStatus(okMsg); }
+      else { toast("执行返回 " + r.errno + "：" + (r.stderr || "权限或节点不可写"), true); setStatus(okMsg + "（返回 " + r.errno + "：" + (r.stderr || "") + "）"); }
+    } catch (e) {
+      setStatus("切换失败：" + e);
+    } finally {
+      if (el) el.classList.remove("busy");
+    }
+  }
+
+  const SHEETS = {
+    status: { title: "模块状态", body: async () => {
+      const r = await run("mount | grep 'vendor/etc' | head -12");
+      const s = (r.stdout || "").trim();
+      return s ? "已挂载的 vendor 配置：\n" + s : "未检测到挂载（可能全部关闭，或未重启）";
+    }},
+    desc: { title: "使用说明", body: async () =>
+      "1. 所有开关即时生效，写节点/属性前自动解除只读，关闭即恢复原厂值\n" +
+      "2. 三网信号开关需重启生效，按当前 SIM 卡选择其一，可同时预置\n" +
+      "3. 风扇 1–5 为官方档，6 为狂暴档；液冷四档仅在有微泵节点的机型出现\n" +
+      "4. 充电分离按阈值停充，回落 3% 恢复；充电加速只解电流限制不动温控\n" +
+      "5. 触控支持全局 / 指定应用两种模式，名单内应用启动自动切换\n" +
+      "6. 频率上限只改上限值，不写 governor、不切刷新率\n" +
+      "7. 配置保存在模块状态目录，重启、升级后保持"
+    },
+    about: { title: "关于", body: async () =>
+      "红魔综合提升\n" +
+      "作者：小霞\n" +
+      "\n" +
+      "反馈：QQ 3034215963\n" +
+      "适用：红魔 11 系列（内核模块，卸载即恢复）\n" +
+      "\n" +
+      "版本：v41.0\n" +
+      "全部增强基于设备原生节点与系统属性实现，不改动系统分区"
+    },
+    reward: { title: "赞赏支持", body: async () => "" }
+  };
+
+  // 打开外部链接（走系统浏览器，避免 WebView 拦截）
+  function copyQQ() {
+    const qq = "3034215963";
+    try {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(qq).then(function () { setStatus("QQ 已复制：" + qq); },
+                                              function () { setStatus("QQ：" + qq); });
+      } else {
+        setStatus("QQ：" + qq + "（长按复制）");
+      }
+    } catch (e) { setStatus("QQ：" + qq); }
+  }
+
+  // 机型信息（红魔9/10/11 全系列）
+  function modelInfo() {
+    var m = "";
+    try { m = (window.__model || ""); } catch (e) {}
+    if (!m) return { name: "红魔系列", hz: 144 };
+    if (/NX799J/i.test(m)) return { name: "红魔11 Air", hz: 144, cpu: "骁龙8至尊", charger: 80 };
+    if (/NX809J/i.test(m)) return { name: "红魔11 Pro", hz: 144, cpu: "骁龙8至尊", charger: "80/120" };
+    if (/NX789J/i.test(m)) return { name: "红魔10 Pro", hz: 144, cpu: "骁龙8至尊", charger: "100/120" };
+    if (/NX769J/i.test(m)) return { name: "红魔9 Pro", hz: 120, cpu: "骁龙8Gen3", charger: "80/165" };
+    // 全系列兜底：红魔9=120Hz 骁龙8Gen3，红魔10/11=144Hz 骁龙8至尊
+    if (/NX76/i.test(m)) return { name: "红魔9 系列", hz: 120, cpu: "骁龙8Gen3", charger: "80/165" };
+    if (/NX78/i.test(m)) return { name: "红魔10 系列", hz: 144, cpu: "骁龙8至尊", charger: "100/120" };
+    if (/NX79|NX80|NX81|NX82/i.test(m)) return { name: "红魔11 系列", hz: 144, cpu: "骁龙8至尊", charger: "80/120" };
+    return { name: "红魔系列", hz: 144 };
+  }
+  var MODEL_INFO = { name: "红魔系列", hz: 120 };
+
+  async function loadModelInfo() {
+    try {
+      const r = await run("for p in ro.product.marketname ro.product.model ro.build.version.release ro.product.device ro.soc.model; do getprop $p | tr -d '\\n'; printf '|'; done");
+      const _parts = (r.stdout || "").split("|");
+      const m = (_parts[0] || "").trim() || (_parts[1] || "").trim();
+      const code = (_parts[1] || "").trim();
+      const _andVer = (_parts[2] || "").trim();
+      const dev = (_parts[3] || "").trim();
+      const soc = (_parts[4] || "").trim();
+      window.__modelCode = code;
+      window.__soc = soc;
+      window.__dev = dev;
+      if (_andVer) { var riOs = document.getElementById("ri-os"); if (riOs) riOs.textContent = "Android " + _andVer; }
+      window.__model = m;
+      MODEL_INFO = modelInfo();
+      if (m) MODEL_INFO.name = m;
+      // 更新性能卡刷新率文案
+      var hz = MODEL_INFO.hz;
+      var et = document.getElementById("perf-hz-turbo");
+      var eb = document.getElementById("perf-hz-balance");
+      if (et) et.textContent = "满频 · " + hz + "Hz";
+      if (eb) eb.textContent = "默认 · " + hz + "Hz";
+      // 顶部显示机型
+      var mh = document.getElementById("model-head");
+      if (mh) {
+        var line = MODEL_INFO.name || m || "红魔系列";
+        mh.textContent = line;
+      }
+      // 相机增强仅红魔11系列可用（9/10 的 camx 参数不同）
+      var camName = document.getElementById("cam-name");
+      if (camName) {
+        camName.textContent = /红魔11/.test(MODEL_INFO.name) ? "相机画质增强" : "相机画质增强（红魔11专属）";
+      }
+      // 填运行状态卡
+      var riM = document.getElementById("ri-model");
+      var riC = document.getElementById("ri-cpu");
+      if (riM) riM.textContent = (MODEL_INFO.name || m || "红魔系列") + (code ? "（" + code + "）" : "");
+      if (riC) riC.textContent = soc || MODEL_INFO.cpu || "-";
+      // 读 CPU 最高频率（按机型自动适配）
+      try {
+        const fr = await run("cat /sys/devices/system/cpu/cpu7/cpufreq/cpuinfo_max_freq 2>/dev/null || cat /sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq");
+        const khz = parseInt((fr.stdout || "").trim(), 10);
+        if (khz > 0) {
+          MODEL_INFO.maxKhz = khz;
+          MODEL_INFO.ghz = (khz / 1000000).toFixed(1);
+          var et2 = document.getElementById("perf-hz-turbo");
+          var eb2 = document.getElementById("perf-hz-balance");
+          if (et2) et2.textContent = "满频 " + MODEL_INFO.ghz + "GHz";
+          if (eb2) eb2.textContent = "默认 " + MODEL_INFO.ghz + "GHz";
+        }
+      } catch (e) {}
+    } catch (e) {}
+  }
+
+  // 功能标签（我们实际有的功能）
+  var FTAGS = [
+    ["cam", "相机画质"], ["chg", "充电加速"], ["sep", "充电分离"], ["fan", "风扇极速"], ["fan_auto", "智能风扇"],
+    ["fankeep", "熄屏保持"], ["pump", "液冷"], ["thermal", "温控移除"], ["cloud", "云控屏蔽"],
+    ["touch", "触控优化"], ["vib", "振动增强"], ["gyro", "陀螺仪"], ["net", "电信"],
+    ["cmcc", "移动"], ["unicom", "联通"], ["wifi", "WiFi"], ["bt", "蓝牙"],
+    ["nav", "导航"], ["bak", "后台保活"], ["deep", "深度休眠"], ["bat", "电池体检"]
+  ];
+  var FTAG_STATE = {};
+
+  function renderTags() {
+    var box = document.getElementById("ftags");
+    if (!box) return;
+    var html = "";
+    for (var i = 0; i < FTAGS.length; i++) {
+      var k = FTAGS[i][0], n = FTAGS[i][1];
+      var on = FTAG_STATE[k] === 1 || FTAG_STATE[k] === "1";
+      if (k === "bat") { on = BAT_ON; }
+      html += '<span class="ftag' + (on ? " on" : "") + '" data-k="' + k + '">' + n + (on ? " 开" : " 关") + '</span>';
+    }
+    box.innerHTML = html;
+    box.querySelectorAll(".ftag").forEach(function (el) {
+      el.onclick = function () {
+        if (el.dataset.k === "bat") { toggleBat(); }
+        else { toggle(el.dataset.k); }
+      };
+    });
+  }
+
+  function updateTag(k, on) {
+    FTAG_STATE[k] = on ? 1 : 0;
+    var el = document.querySelector('.ftag[data-k="' + k + '"]');
+    if (el) {
+      el.classList.toggle("on", !!on);
+      var n = (FTAGS.find(function (x) { return x[0] === k; }) || ["", k])[1];
+      el.textContent = n + (on ? " 开" : " 关");
+    }
+  }
+
+  // ===== 振动三参数 =====
+  async function setVibParams() {
+    const num = function (id, min, max) {
+      const v = parseInt(((document.getElementById(id) || {}).value || "").trim(), 10);
+      if (isNaN(v) || v < min || v > max) return null;
+      return v;
+    };
+    const g = num("vib-gain", 1, 255), d = num("vib-duration", 1, 255), v = num("vib-vmax", 1, 255);
+    if (g === null || d === null || v === null) { setStatus("三个参数都填 1-255 的整数"); return; }
+    const cmd = "mkdir -p " + STATE + " && echo " + g + " > " + STATE + "/vib_gain && echo " + d + " > " + STATE + "/vib_duration && echo " + v + " > " + STATE + "/vib_vmax && " +
+      "printf '0x%x' " + g + " > " + VB + "/gain 2>/dev/null; printf '0x%x' " + g + " > " + VB2 + "/gain 2>/dev/null; " +
+      "printf '0x%x' " + v + " > " + VB + "/vmax 2>/dev/null; printf '0x%x' " + v + " > " + VB2 + "/vmax 2>/dev/null; " +
+      "echo " + d + " > " + VB + "/duration 2>/dev/null; printf '0x%x' " + d + " > " + VB + "/duration_aw 2>/dev/null";
+    const r = await run(cmd);
+    await persist("vib_gain", g);
+    await persist("vib_duration", d);
+    await persist("vib_vmax", v);
+    setStatus("振动参数已写入：" + g + " / " + d + " / " + v + (r.errno === 0 ? " ✓" : ""));
+  }
+
+  // ===== 触控模式与名单 =====
+  async function setTouchMode(m) {
+    document.querySelectorAll(".tm-btn").forEach(function (b) { b.classList.toggle("on", b.dataset.m === m); });
+    let cmd = "mkdir -p " + STATE + " && echo " + m + " > " + STATE + "/touch_mode && ";
+    if (m === "global") {
+      cmd += "if [ -e " + TP + "/tp_report_rate ]; then echo 4 > " + TP + "/tp_report_rate; echo 1 > " + TP + "/play_game; echo 4 > " + TP + "/follow_hand_level; fi; settings put system touch_sampling_rate 960 2>/dev/null";
+    } else {
+      cmd += "if [ -e " + TP + "/tp_report_rate ]; then echo 1 > " + TP + "/tp_report_rate; echo 0 > " + TP + "/play_game; echo 1 > " + TP + "/follow_hand_level; fi; settings delete system touch_sampling_rate 2>/dev/null";
+    }
+    const r = await run(cmd);
+    await persist("touch_mode", m);
+    setStatus((m === "global" ? "触控全局生效" : "触控仅对名单内应用生效") + (r.errno === 0 ? " ✓" : ""));
+  }
+
+  async function pickTouchApps() {
+    setStatus("正在读取应用列表…");
+    const r = await run("sh " + TOOL + " apps 2>&1");
+    const pkgs = (r.stdout || "").split("|").map(function (x) { return x.trim(); }).filter(Boolean);
+    if (!pkgs.length) { setStatus("没有读取到应用，请确认 gametool.sh 存在"); return; }
+    const cr = await run("cat " + STATE + "/touch_apps 2>/dev/null");
+    const cur = (cr.stdout || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
+    const old = document.getElementById("app-modal");
+    if (old) old.remove();
+    const div = document.createElement("div");
+    div.id = "app-modal";
+    div.className = "show";
+    div.onclick = function () { closeTouchApps(); };
+    div.innerHTML = '<div class="modal-box" onclick="event.stopPropagation()">' +
+      '<div class="modal-title">选择需要触控加速的应用（' + pkgs.length + '）</div>' +
+      '<div class="modal-list">' + pkgs.map(function (p) {
+        const on = cur.indexOf(p) >= 0 ? " checked" : "";
+        return '<label class="bl-item"><input type="checkbox" class="touch-cb" value="' + p + '"' + on + '><span>' + p + '</span></label>';
+      }).join("") + '</div>' +
+      '<div class="modal-btns"><button class="btn ghost" onclick="closeTouchApps()">取消</button><button class="btn" onclick="saveTouchApps()">保存</button></div></div>';
+    document.body.appendChild(div);
+    setStatus("已读取 " + pkgs.length + " 个应用");
+  }
+  function closeTouchApps() { const m = document.getElementById("app-modal"); if (m) m.remove(); }
+  async function saveTouchApps() {
+    const checks = document.querySelectorAll("#app-modal .touch-cb:checked");
+    const list = Array.prototype.map.call(checks, function (c) { return c.value; });
+    const payload = list.join("\n");
+    const r = await run("mkdir -p " + STATE + " && : > " + STATE + "/touch_apps && printf '%s\\n' '" + payload + "' > " + STATE + "/touch_apps 2>/dev/null");
+    scheduleSync();
+    closeTouchApps();
+    const tad = document.getElementById("touch-apps-desc");
+    if (tad) tad.textContent = list.length ? ("已选 " + list.length + " 个应用") : "未选择应用，指定应用模式下不生效";
+    setStatus("触控名单已保存（" + list.length + " 个）" + (r.errno === 0 ? " ✓" : ""));
+  }
+
+  // ===== CPU / GPU 频率 =====
+  async function applyFreqNow() {
+    const cmd = "pc=" + STATE + "/perf_custom; [ -f $pc ] || exit 0; " +
+      "c0=$(cut -d'|' -f1 $pc); c4=$(cut -d'|' -f2 $pc); c7=$(cut -d'|' -f3 $pc); gpu=$(cut -d'|' -f4 $pc); gov=$(cut -d'|' -f5 $pc); " +
+      "for f in /sys/devices/system/cpu/cpu*/cpufreq/scaling_max_freq /sys/devices/system/cpu/cpu*/cpufreq/scaling_min_freq /sys/class/kgsl/kgsl-3d0/devfreq/max_freq /sys/class/kgsl/kgsl-3d0/devfreq/min_freq /sys/class/kgsl/kgsl-3d0/max_clock_mhz; do chmod 644 $f 2>/dev/null; done; " +
+      "if [ -n \"$gov\" ]; then for c in 0 4 7; do echo $gov > /sys/devices/system/cpu/cpu$c/cpufreq/scaling_governor 2>/dev/null; done; fi; " +
+      "if [ -n \"$c0\" ]; then echo $c0 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq 2>/dev/null; echo $c0 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq 2>/dev/null; fi; " +
+      "if [ -n \"$c4\" ]; then echo $c4 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_max_freq 2>/dev/null; echo $c4 > /sys/devices/system/cpu/cpu4/cpufreq/scaling_min_freq 2>/dev/null; fi; " +
+      "if [ -n \"$c7\" ]; then echo $c7 > /sys/devices/system/cpu/cpu7/cpufreq/scaling_max_freq 2>/dev/null; echo $c7 > /sys/devices/system/cpu/cpu7/cpufreq/scaling_min_freq 2>/dev/null; fi; " +
+      "if [ -n \"$gpu\" ]; then echo $gpu > /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 2>/dev/null; echo $gpu > /sys/class/kgsl/kgsl-3d0/devfreq/min_freq 2>/dev/null; echo $((gpu/1000000)) > /sys/class/kgsl/kgsl-3d0/max_clock_mhz 2>/dev/null; fi";
+    await run(cmd);
+  }
+
+  async function applyFreqCustom() {
+    const g = function (id) { return ((document.getElementById(id) || {}).value || "").trim(); };
+    const c0 = g("freq-c0"), c4 = g("freq-c4"), c7 = g("freq-c7"), gp = g("freq-gpu");
+    if (![c0, c4, c7, gp].every(function (x) { return /^[0-9]+$/.test(x) && parseInt(x, 10) > 0; })) {
+      setStatus("四个频率都要填正整数（CPU 用 kHz，GPU 用 Hz）"); return;
+    }
+    const cmd = "mkdir -p " + STATE + " && echo '" + c0 + "|" + c4 + "|" + c7 + "|" + gp + "|' > " + STATE + "/perf_custom";
+    const r = await run(cmd);
+    await persist("perf_custom", c0 + "|" + c4 + "|" + c7 + "|" + gp + "|");
+    await applyFreqNow();
+    setStatus("频率上限已写入" + (r.errno === 0 ? " ✓" : ""));
+    refreshFreqInfo();
+  }
+
+  async function refreshFreqInfo() {
+    const r = await run("for c in 0 4 7; do cat /sys/devices/system/cpu/cpu$c/cpufreq/scaling_max_freq 2>/dev/null; printf '|'; done; cat /sys/class/kgsl/kgsl-3d0/devfreq/max_freq 2>/dev/null");
+    const p = (r.stdout || "").split("|").map(function (x) { return parseInt((x || "").trim(), 10); });
+    const ghz = function (v) { return isNaN(v) || !v ? "--" : (v / 1000000).toFixed(2) + " GHz"; };
+    const el = document.getElementById("freq-info");
+    if (el) el.textContent = "当前：小核 " + ghz(p[0]) + " · 中核 " + ghz(p[1]) + " · 大核 " + ghz(p[2]) + " · GPU " + ghz(p[3]);
+    ["freq-c0", "freq-c4", "freq-c7", "freq-gpu"].forEach(function (id, i) {
+      const e = document.getElementById(id); if (e && !e.value && p[i]) e.value = String(p[i]);
+    });
+  }
+
+  // 电池状态（电量/温度/功率）
+  async function battRefresh() {
+    try {
+      const r = await run("cat /sys/class/power_supply/battery/capacity /sys/class/power_supply/battery/temp /sys/class/power_supply/battery/current_now /sys/class/power_supply/battery/voltage_now /sys/class/power_supply/battery/status 2>/dev/null | tr '\\012' '|'");
+      const parts = (r.stdout || "").split("|").map(function (x) { return x.trim(); });
+      var cap = parseInt(parts[0], 10);
+      var temp = parseInt(parts[1], 10);
+      var cur = parseInt(parts[2], 10);
+      var vol = parseInt(parts[3], 10);
+      var st = parts[4] || "";
+      // 圆环保持功能数（由 refreshAll 更新，不动）
+      var tt = document.getElementById("batt-temp");
+      if (tt && temp > 0) tt.textContent = (temp / 10).toFixed(1);
+      var capEl = document.getElementById("bat-capacity");
+      if (capEl && cap > 0) capEl.textContent = cap + "%";
+      // 功率：先按 battery 的电流/电压算，读不到再退到平均值与 usb 输入侧
+      var watts = (vol > 0 && Math.abs(cur) > 0) ? Math.abs(cur * vol) / 1e12 : 0;
+      if (!watts && st.indexOf("Charging") >= 0) {
+        try {
+          const pr = await run("cat /sys/class/power_supply/battery/current_avg /sys/class/power_supply/battery/voltage_avg /sys/class/power_supply/usb/current_now /sys/class/power_supply/usb/voltage_now 2>/dev/null | tr '\\012' '|'");
+          const pp = (pr.stdout || "").split("|").map(function (x) { return parseInt(x, 10) || 0; });
+          var pairs = [[pp[0], pp[1]], [pp[2], pp[3]]];
+          for (var pi = 0; pi < pairs.length; pi++) {
+            var pc = pairs[pi][0], pv = pairs[pi][1];
+            if (pc > 0 && pv > 0) { watts = Math.abs(pc * pv) / 1e12; break; }
+          }
+        } catch (e) {}
+      }
+      var pw = document.getElementById("batt-power");
+      if (pw) {
+        if (watts > 0) pw.textContent = watts.toFixed(1);
+        else if (st.indexOf("Charging") >= 0) pw.textContent = "—";
+        else pw.textContent = "0.0";
+      }
+      // 电池详情卡（第1页）
+      var bd = document.getElementById("bat-detail");
+      if (bd) {
+        bd.style.display = BAT_ON ? "block" : "none";
+      }
+      try {
+        const br2 = await run("cat /sys/class/power_supply/battery/charge_full /sys/class/power_supply/battery/charge_full_design /sys/class/power_supply/battery/cycle_count /sys/class/power_supply/battery/voltage_now 2>/dev/null | tr '\\012' '|'");
+        const bp2 = (br2.stdout || "").split("|");
+        var bFull = parseInt(bp2[0], 10), bDesign = parseInt(bp2[1], 10), bCyc = parseInt(bp2[2], 10), bVol = parseInt(bp2[3], 10);
+        var setB = function (id, v) { var e = document.getElementById(id); if (e) e.textContent = v; };
+        if (bDesign > 0) { setB("bd-design", Math.round(bDesign / 1000) + " mAh"); setB("bd-full", Math.round(bFull / 1000) + " mAh"); }
+        if (bCyc > 0) setB("bd-cycles", bCyc);
+        if (vol > 0) setB("bd-volt", (vol / 1000000).toFixed(2) + " V");
+        if (temp > 0) setB("bd-temp", (temp / 10).toFixed(1) + " °C");
+        if (bFull > 0 && bDesign > 0) {
+          var pct = Math.round(bFull / bDesign * 100);
+          setB("bd-percent", pct + "%");
+          setB("bd-health", pct >= 90 ? "优秀" : (pct >= 80 ? "良好" : "建议更换"));
+        }
+      } catch (e) {}
+
+      // 运行状态卡：电池健康 + 充电状态
+      var riB = document.getElementById("ri-bat");
+      var riC = document.getElementById("ri-chg");
+      if (riB) {
+        try {
+          const br = await run("cat /sys/class/power_supply/battery/charge_full /sys/class/power_supply/battery/charge_full_design 2>/dev/null | tr '\\012' '|'");
+          const bp = (br.stdout || "").split("|");
+          var full = parseInt(bp[0], 10), design = parseInt(bp[1], 10);
+          if (full > 0 && design > 0) riB.textContent = Math.round(full / design * 100) + "%";
+        } catch (e) {}
+      }
+      if (riC) {
+        if (st.indexOf("Charging") >= 0) {
+          riC.textContent = "充电中 " + (watts > 0 ? watts.toFixed(1) : "—") + "W";
+        } else if (st.indexOf("Discharging") >= 0) {
+          riC.textContent = "放电中";
+        } else {
+          riC.textContent = st || "-";
+        }
+      }
+
+    } catch (e) {}
+  }
+
+  async function checkUpdate() {
+    const res = document.getElementById("upd-result");
+    const show2 = function (t) { if (res) res.textContent = t; };
+    show2("正在检查更新…");
+    try {
+      // 读 update.json（单行 JSON，直接取）
+      let r = await run("curl -sL --max-time 15 'https://gitee.com/qq3034215963/redmagic-11-module/raw/master/update.json' 2>/dev/null | tr -d '\\012\\015'");
+      let txt = (r.stdout || "").replace(/[\r\n]+/g, "").trim();
+      if (!txt) {
+        r = await run("wget -q -O - --timeout=15 'https://gitee.com/qq3034215963/redmagic-11-module/raw/master/update.json' 2>/dev/null | tr -d '\\012\\015'");
+        txt = (r.stdout || "").replace(/[\r\n]+/g, "").trim();
+      }
+      // 当前版本
+      const vr = await run("grep '^versionCode=' /data/adb/modules/redmagic_11_combo/module.prop 2>/dev/null");
+      const vm = await run("grep '^version=' /data/adb/modules/redmagic_11_combo/module.prop 2>/dev/null");
+      const cur = parseInt((vr.stdout || "").split("=")[1], 10) || 3600;
+      const curV = (vm.stdout || "").split("=")[1] || "?";
+      // 优先走 Gitee releases API（只看最新发行版，不用改 update.json）
+      var apiTxt = "";
+      try {
+        const ar = await run("curl -sL --max-time 15 'https://gitee.com/api/v5/repos/qq3034215963/redmagic-11-module/releases/latest' 2>/dev/null | tr -d '\\012\\015'");
+        apiTxt = (ar.stdout || "").replace(/[\r\n]+/g, "").trim();
+      } catch (e0) {}
+      if (apiTxt && apiTxt.indexOf("tag_name") > 0) {
+        try {
+          const aj = JSON.parse(apiTxt);
+          var tag = String(aj.tag_name || "").trim();
+          var mm = tag.match(/^v?(\d+)\.(\d+)/);
+          if (mm) {
+            var apiCode = parseInt(mm[1], 10) * 100 + parseInt(mm[2], 10);
+            if (apiCode > cur) {
+              var apiUrl = "https://gitee.com/qq3034215963/redmagic-11-module/releases/download/" + tag + "/redmagic_11_combo_" + tag + "-secure.zip";
+              // 清理旧的更新包，避免 Download 堆积一堆版本
+              await run("rm -f /sdcard/Download/update_v*.zip 2>/dev/null || true");
+              var dlName2 = "update_" + tag.replace(/[^0-9a-zA-Z.]/g, "") + ".zip";
+              var dlPath2 = "/sdcard/Download/" + dlName2;
+              var dlCmd = "( for i in 1 2 3 4 5 6 7 8 9 10; do curl -sL -C - --max-time 300 -o '" + dlPath2 + "' '" + apiUrl + "' > /dev/null 2>&1; sz=$(stat -c %s '" + dlPath2 + "' 2>/dev/null); case \"$sz\" in ''|*[!0-9]*) sz=0;; esac; [ \"$sz\" -ge 12000000 ] && break; sleep 3; done ) > /dev/null 2>&1 &";
+              await run(dlCmd);
+              startDlPoll(dlPath2);
+              show2("发现新版本 " + tag + "（当前 " + curV + "）\n已在后台下载：" + dlName2 + "\n约 1-3 分钟后点「安装更新」");
+              return;
+            } else {
+              show2("已是最新版本 " + curV + "\n服务器最新：" + tag);
+              return;
+            }
+          }
+        } catch (e2) {}
+      }
+      if (!txt) { show2("检查失败：更新服务器不可用（当前 " + curV + "）"); return; }
+      let j;
+      try { j = JSON.parse(txt); } catch (e1) { show2("检查失败：返回格式异常（" + txt.slice(0, 40) + "）"); return; }
+      if (j.versionCode && j.versionCode > cur) {
+        // 后台下载（不阻塞界面）
+        var dlName = "update_" + String(j.version).replace(/[^0-9a-zA-Z.]/g, "") + ".zip";
+        var dlPath = "/sdcard/Download/" + dlName;
+        await run("(curl -sL --max-time 600 -o '" + dlPath + "' '" + j.zipUrl + "' > /dev/null 2>&1 &)");
+        show2("发现新版本 " + j.version + "（当前 " + curV + "）\n已在后台下载：" + dlName + "\n约 1-3 分钟后点「安装更新」");
+      } else {
+        show2("已是最新版本 " + curV + "\n服务器最新：" + (j.version || "?"));
+      }
+    } catch (e) {
+      show2("检查失败：" + String(e).slice(0, 60));
+    }
+  }
+
+  var dlTimer = null;
+  function startDlPoll(path) {
+    var wrap = document.getElementById("dl-wrap");
+    var fg = document.getElementById("dl-fg");
+    var txt = document.getElementById("dl-txt");
+    if (wrap) wrap.style.display = "block";
+    if (dlTimer) { clearInterval(dlTimer); dlTimer = null; }
+    dlTimer = setInterval(async function () {
+      try {
+        const r = await run("stat -c %s '" + path + "' 2>/dev/null");
+        var sz = parseInt((r.stdout || "").trim(), 10) || 0;
+        var pct = Math.min(100, Math.round(sz / 13000000 * 100));
+        if (fg) fg.style.width = pct + "%";
+        if (txt) txt.textContent = pct + "%（" + (sz / 1024 / 1024).toFixed(1) + "MB / 12.4MB）" + (pct >= 99 ? " · 下载完成，点「安装更新」" : " · 下载中…");
+        if (pct >= 99) { clearInterval(dlTimer); dlTimer = null; }
+      } catch (e) {}
+    }, 1500);
+  }
+
+  async function installUpdate() {
+    const res = document.getElementById("upd-result");
+    const show2 = function (t) { if (res) res.textContent = t; };
+    show2("正在查找更新包…");
+    try {
+      const lr = await run("ls -t /sdcard/Download/redmagic_11_combo_v*-secure.zip /sdcard/Download/update_v*.zip 2>/dev/null | head -5");
+      var list = (lr.stdout || "").trim().split("\n").filter(Boolean);
+      if (!list.length) { show2("没找到更新包\n请先点「检查更新」，或把 zip 放到 Download"); return; }
+      var pick = "", size = 0;
+      for (var li = 0; li < list.length; li++) {
+        const sr = await run("stat -c %s '" + list[li] + "' 2>/dev/null");
+        var sz = parseInt((sr.stdout || "").trim(), 10) || 0;
+        if (sz >= 12000000) { pick = list[li]; size = sz; break; }
+      }
+      if (!pick) { show2("更新包还没下载完（或损坏）\n请到项目地址下载完整 zip 放进 Download"); return; }
+      var name = pick.split("/").pop();
+      // 用 DocumentsProvider content URI（SukiSU 能拿到真实文件名，不再 unknown.zip）
+      var docUri = "content://com.android.externalstorage.documents/document/primary%3ADownload%2F" + encodeURIComponent(name);
+      var op = await run("am start -a android.intent.action.VIEW -d '" + docUri + "' -t 'application/zip' 2>&1");
+      var opOut = ((op.stdout || "") + (op.stderr || ""));
+      if (/Error|Exception/i.test(opOut)) {
+        // 回退：file:// 打开方式选择器
+        await run("am start -a android.intent.action.VIEW -d 'file://" + pick + "' -t 'application/zip' > /dev/null 2>&1 || true");
+      }
+      // 通知栏也提醒（切走后能看到文件名）
+      await run("cmd notification post -S bigtext -t '红魔模块更新' rmupd '已下载 " + name + "（" + (size/1024/1024).toFixed(1) + "MB），在弹窗里选 SukiSU 安装' > /dev/null 2>&1 || true");
+      show2("已弹出「打开方式」：\n" +
+        "请选择 SukiSU（或 Magisk模块分析与刷入）\n" +
+        "确认安装 → 重启生效\n\n" +
+        "如果没弹或显示 unknown：\n" +
+        "打开 SukiSU → 模块 → 安装 → 选 Download/" + name + "\n\n" +
+        "文件：" + pick);
+    } catch (e) {
+      show2("打开失败：" + String(e).slice(0, 60));
+    }
+  }
+
+  async function cleanupOldZips() {
+    const res = document.getElementById("upd-result");
+    const show2 = function (t) { if (res) res.textContent = t; };
+    show2("正在清理旧版本…");
+    try {
+      // 当前安装版本（保留这个版本的包）
+      const vr = await run("grep '^version=' /data/adb/modules/redmagic_11_combo/module.prop 2>/dev/null");
+      var cur = ((vr.stdout || "").split("=")[1] || "").trim();
+      if (!cur) { show2("读不到当前版本，已取消（避免误删）"); return; }
+      // 统计清理前
+      const cntBefore = await run("ls /sdcard/Download/redmagic_11_combo_v*-secure.zip /sdcard/Download/update_v*.zip 2>/dev/null | wc -l");
+      var n1 = parseInt((cntBefore.stdout || "").trim(), 10) || 0;
+      // 删除：除当前版本外，本模块的所有旧 zip（不碰其他文件）
+      var cmd = "for f in /sdcard/Download/redmagic_11_combo_v*-secure.zip /sdcard/Download/update_v*.zip; do [ -e \"$f\" ] || continue; case \"$f\" in *" + cur + "*) continue;; esac; rm -f \"$f\"; done 2>/dev/null || true";
+      await run(cmd);
+      const cntAfter = await run("ls /sdcard/Download/redmagic_11_combo_v*-secure.zip /sdcard/Download/update_v*.zip 2>/dev/null | wc -l");
+      var n2 = parseInt((cntAfter.stdout || "").trim(), 10) || 0;
+      show2("已清理旧版本：删除 " + (n1 - n2) + " 个文件\n保留：" + cur + "（当前版本）\n只删了本模块的旧包，其他文件未动");
+    } catch (e) {
+      show2("清理失败：" + String(e).slice(0, 50));
+    }
+  }
+
+  async function fallbackInstall() {
+    const res = document.getElementById("upd-result");
+    const show2 = function (t) { if (res) res.textContent = t; };
+    show2("正在查找更新包…");
+    try {
+      const lr = await run("ls -t /sdcard/Download/redmagic_11_combo_v*-secure.zip /sdcard/Download/update_v*.zip 2>/dev/null | head -5");
+      var list = (lr.stdout || "").trim().split("\n").filter(Boolean);
+      var pick = "";
+      for (var li = 0; li < list.length; li++) {
+        const sr = await run("stat -c %s '" + list[li] + "' 2>/dev/null");
+        var sz = parseInt((sr.stdout || "").trim(), 10) || 0;
+        if (sz >= 12000000) { pick = list[li]; break; }
+      }
+      if (!pick) { show2("没找到完整的更新包\n请先点「检查更新」下载，或把 zip 放进 Download"); return; }
+      var name = pick.split("/").pop();
+      // 打开 MT 管理器并定位到该 zip（MT 包名 bin.mt.plus）
+      await run("am start -a android.intent.action.VIEW -d 'file://" + pick + "' -t 'application/zip' -p bin.mt.plus > /dev/null 2>&1 || true");
+      // 回退：系统文件管理器打开 Download 目录
+      await run("am start -a android.intent.action.VIEW -d 'content://com.android.externalstorage.documents/document/primary%3ADownload' -t 'vnd.android.document/directory' > /dev/null 2>&1 || true");
+      show2("备用安装（文件：" + name + "）\n\n" +
+        "方式 A（MT）：在 MT 里长按该 zip → 打开方式 → 选 SukiSU\n" +
+        "方式 B（SukiSU）：模块 → 安装 → 选 Download/" + name + "\n\n" +
+        "确认后重启生效\n文件：" + pick);
+    } catch (e) {
+      show2("打开失败：" + String(e).slice(0, 60));
+    }
+  }
+
+  async function openUrl(url) {
+    setStatus("正在打开链接…");
+    await run("am start -a android.intent.action.VIEW -d '" + url + "' 2>/dev/null");
+    setStatus("已尝试打开：\n" + url);
+  }
+
+  // ===== 亮度增强 =====
+
+  // ===== 亮度增强 =====
+  const LUM = MOD + "/lumin/bin/luminpro";
+  const TOOL = MOD + "/gametool.sh";
+  let lumTimer = null;
+
+  async function lumRefresh() {
+    try {
+      const b = await run("cat /sys/class/backlight/panel0-backlight/brightness 2>/dev/null");
+      const mx = await run("cat /sys/class/backlight/panel0-backlight/max_brightness 2>/dev/null");
+      const psr = await run("ps -A 2>/dev/null | grep -c '[l]uminpro'");
+      const cfgr = await run(LUM + " config read 2>/dev/null");
+      const cur = (b.stdout || "").trim() || "?";
+      const max = (mx.stdout || "").trim() || "?";
+      const running = parseInt((psr.stdout || "0").trim(), 10) > 0;
+      let cfg = {};
+      try { cfg = JSON.parse((cfgr.stdout || "{}").trim()); } catch (e) { cfg = {}; }
+      const st = document.getElementById("lum-status");
+      if (st) {
+        var cfgTxt = "";
+        if (cfg && cfg.ui_max_bri) cfgTxt = " · 触发阈值 " + cfg.ui_max_bri + " / 峰值 " + (cfg.max_bri || "?");
+        st.textContent = "当前亮度 " + cur + " / " + max;
+      }
+      const badge = document.getElementById("lum-state");
+      if (badge) {
+        badge.textContent = running ? "运行中" : "未运行";
+        badge.style.background = running ? "rgba(47,158,110,.15)" : "rgba(150,160,170,.15)";
+        badge.style.color = running ? "#2f9e6e" : "#8a93a2";
+      }
+      const th = document.getElementById("lum-th");
+      const pk = document.getElementById("lum-peak");
+      const sp = document.getElementById("lum-steps");
+      if (th && !th.value && cfg.ui_max_bri) th.value = cfg.ui_max_bri;
+      if (pk && !pk.value && cfg.max_bri) pk.value = cfg.max_bri;
+      if (sp && !sp.value && cfg.steps_num) sp.value = cfg.steps_num;
+      const au = document.getElementById("lum-auto");
+      if (au) au.classList.toggle("on", cfg.auto_bri_sleep == 1);
+    } catch (e) {}
+  }
+
+  async function toggleAutoSleep() {
+    const el = document.getElementById("lum-auto");
+    if (!el) return;
+    const on = !el.classList.contains("on");
+    el.classList.toggle("on", on);
+    const r = await run(LUM + " config patch '{\"auto_bri_sleep\":" + (on ? 1 : 0) + "}' 2>&1");
+    setStatus("自动亮度休眠已" + (on ? "开启" : "关闭") + (r.errno === 0 ? " ✓" : ""));
+  }
+
+  async function saveLum() {
+    const th = (document.getElementById("lum-th").value || "").trim();
+    const peak = (document.getElementById("lum-peak").value || "").trim();
+    const steps = (document.getElementById("lum-steps").value || "").trim();
+    const patch = {};
+    if (th) patch.ui_max_bri = parseInt(th, 10);
+    if (peak) patch.max_bri = parseInt(peak, 10);
+    if (steps) patch.steps_num = parseInt(steps, 10);
+    if (!Object.keys(patch).length) { setStatus("请至少填写一项"); return; }
+    const r = await run(LUM + " config patch '" + JSON.stringify(patch) + "' 2>&1");
+    // 同时保存到模块外（升级/重装后由 service.sh 恢复）
+    const ext = [];
+    if (patch.ui_max_bri) ext.push("echo " + patch.ui_max_bri + " > " + STATE + "/lum_th");
+    if (patch.max_bri) ext.push("echo " + patch.max_bri + " > " + STATE + "/lum_peak");
+    if (patch.steps_num) ext.push("echo " + patch.steps_num + " > " + STATE + "/lum_steps");
+    if (ext.length) await run(ext.join("; "));
+    if (patch.ui_max_bri) await persist("lum_th", patch.ui_max_bri);
+    if (patch.max_bri) await persist("lum_peak", patch.max_bri);
+    if (patch.steps_num) await persist("lum_steps", patch.steps_num);
+    // 重启守护让新配置立即生效
+    await run("pkill -f 'luminpro daemon' 2>/dev/null; sleep 1; nohup " + LUM + " daemon > /dev/null 2>&1 &");
+    setStatus("亮度配置已保存并生效" + (r.errno === 0 ? " ✓" : ""));
+    setTimeout(lumRefresh, 1200);
+  }
+
+  async function lumBoost() {
+    setStatus("正在拉高亮度…");
+    const r = await run(LUM + " boost 2>&1");
+    setStatus((r.stdout || r.stderr || "已执行").trim().slice(0, 120));
+    lumRefresh();
+  }
+
+  async function pickBlack() {
+    setStatus("正在读取应用列表…");
+    const r = await run("sh " + TOOL + " apps 2>&1");
+    const pkgs = (r.stdout || "").split("|").map(function (x) { return x.trim(); }).filter(Boolean);
+    if (!pkgs.length) { setStatus("应用列表为空"); return; }
+    let black = [];
+    try {
+      const cr = await run(LUM + " config read 2>/dev/null");
+      const cj = JSON.parse((cr.stdout || "{}").trim());
+      black = cj.blacklist_apps || [];
+    } catch (e) {}
+    const html = '<div class="modal-mask" onclick="closeBlack(event)">' +
+      '<div class="modal-box" onclick="event.stopPropagation()">' +
+      '<div class="modal-title">选择黑名单应用（前台时不提升亮度）</div>' +
+      '<div class="modal-list">' +
+      pkgs.map(function (p) {
+        const on = black.indexOf(p) >= 0 ? " checked" : "";
+        return '<label class="bl-item"><input type="checkbox" value="' + p + '"' + on + '>' +
+          '<img class="bl-icon" src="ksu://icon/' + p + '" onerror="this.style.display=\'none\'">' +
+          '<span>' + p + '</span></label>';
+      }).join("") +
+      '</div><div class="modal-btns"><button class="lum-btn gray" onclick="closeBlack()">取消</button><button class="lum-btn" onclick="saveBlack()">保存</button></div></div></div>';
+    const old = document.getElementById("bl-modal");
+    if (old) old.remove();
+    const div = document.createElement("div");
+    div.id = "bl-modal";
+    div.innerHTML = html;
+    document.body.appendChild(div);
+  }
+
+  function closeBlack(ev) {
+    if (ev && ev.target !== ev.currentTarget) return;
+    const m = document.getElementById("bl-modal");
+    if (m) m.remove();
+  }
+
+  async function saveBlack() {
+    const checks = document.querySelectorAll("#bl-modal input[type=checkbox]:checked");
+    const arr = Array.prototype.map.call(checks, function (c) { return c.value; });
+    const r = await run(LUM + " config patch '" + JSON.stringify({ blacklist_apps: arr }) + "' 2>&1");
+    closeBlack();
+    setStatus("黑名单已保存（" + arr.length + " 个应用）" + (r.errno === 0 ? " ✓" : ""));
+  }
+
+  // ===== 手电筒超频 =====
+  const TORCH = "/sys/class/leds/led:torch_0/brightness";
+  let torchTimer = null;
+  let torchOnState = false;
+
+  function torchPreview(v) {
+    const el = document.getElementById("torch-bri");
+    if (el) el.textContent = "亮度调节：" + v;
+  }
+
+  async function torchSliderApply(v) {
+    if (torchOnState) await torchApply(parseInt(v, 10) || 0);
+  }
+
+  function torchStep(d) {
+    const rg = document.getElementById("torch-range");
+    if (!rg) return;
+    let v = (parseInt(rg.value, 10) || 0) + d;
+    v = Math.max(0, Math.min(parseInt(rg.max, 10) || 500, v));
+    rg.value = v;
+    torchPreview(v);
+    if (torchOnState) torchApply(v);
+  }
+
+  async function torchApply(v) {
+    const sw = "/sys/class/leds/led:switch_0/brightness";
+    const swv = Math.min(v, 255);
+    await run(
+      "chmod 644 " + TORCH + " 2>/dev/null; " +
+      "echo " + v + " > " + TORCH + " 2>&1; " +
+      "chmod 644 " + sw + " 2>/dev/null; " +
+      "echo " + swv + " > " + sw + " 2>&1"
+    );
+    torchOnState = v > 0;
+    const bulb0 = document.getElementById("torch-bulb");
+    if (bulb0) bulb0.classList.toggle("off", v <= 0);
+    const nm0 = document.getElementById("torch-name");
+    if (nm0) nm0.textContent = "后置主手电筒" + (v > 0 ? " · 工作中" : " · 已关闭");
+    const bri0 = document.getElementById("torch-bri");
+    if (bri0 && v > 0) bri0.textContent = "亮度调节：" + v;
+    setTimeout(torchRefresh, 400);
+  }
+
+  let LOCK_SWIPE = false;
+
+  function toggleTorchLock() {
+    LOCK_SWIPE = !LOCK_SWIPE;
+    const el = document.getElementById("torch-lock");
+    if (el) el.classList.toggle("on", LOCK_SWIPE);
+    if (LOCK_SWIPE) {
+      setStatus("已锁定翻页：现在只能调节手电筒亮度/开关\n关闭此开关恢复页面滑动");
+    } else {
+      setStatus("已解锁：可以正常滑动翻页");
+    }
+  }
+
+  async function torchToggle() {
+    if (torchOnState) {
+      torchOnState = false;
+      await run("echo 0 > " + TORCH + " 2>&1; echo 0 > /sys/class/leds/led:switch_0/brightness 2>&1");
+      setStatus("手电筒已关闭");
+      torchRefresh();
+    } else {
+      const v = parseInt(document.getElementById("torch-range").value || "550", 10) || 550;
+      torchOnState = true;
+      await torchApply(v);
+      setStatus("手电筒已点亮：" + v);
+    }
+  }
+
+  async function torchRefresh() {
+    try {
+      const r = await run("cat " + TORCH + " 2>/dev/null; printf '|'; cat /sys/class/leds/led:torch_0/max_brightness 2>/dev/null");
+      const p = (r.stdout || "").split("|");
+      const curNum = parseInt((p[0] || "").trim(), 10);
+      const max = parseInt((p[1] || "550").trim(), 10) || 550;
+      if (!isNaN(curNum)) torchOnState = curNum > 0;
+      // 界面用操作状态（torchOnState）兜底，避免读不到时误显示
+      const on = torchOnState;
+      const bulb = document.getElementById("torch-bulb");
+      if (bulb) bulb.classList.toggle("off", !on);
+      const bri = document.getElementById("torch-bri");
+      if (bri) {
+        const shown = (!isNaN(curNum) && curNum > 0) ? curNum : parseInt(document.getElementById("torch-range").value || "500", 10);
+        bri.textContent = "亮度调节：" + shown;
+      }
+      const nm = document.getElementById("torch-name");
+      if (nm) nm.textContent = "后置主手电筒" + (on ? " · 工作中" : " · 已关闭");
+      const rg = document.getElementById("torch-range");
+      if (rg) rg.max = Math.max(max, 550);   // 保持 600 上限（写入超内核值会被驱动截断）
+    } catch (e) {}
+  }
+
+  // ===== 电池健康 =====
+  let batTimer = null;
+  let BAT_ON = false;
+
+  async function toggleBat() {
+    BAT_ON = !BAT_ON;
+    const el = document.getElementById("sw-bat");
+    if (el) el.classList.toggle("on", BAT_ON);
+    await run("echo " + (BAT_ON ? 1 : 0) + " > " + STATE + "/bat 2>/dev/null");
+    await persist("bat", BAT_ON ? 1 : 0);
+    updateTag("bat", BAT_ON);
+    var bdEl = document.getElementById("bat-detail");
+    if (bdEl) bdEl.style.display = BAT_ON ? "block" : "none";
+    setStatus("电池健康检测已" + (BAT_ON ? "开启" : "关闭"));
+    batRefresh();
+  }
+
+  async function batRefresh() {
+    if (!BAT_ON) {
+      const pe = document.getElementById("bd-percent");
+      if (pe) pe.textContent = "--%";
+      const desc = document.getElementById("bat-desc");
+      if (desc) desc.textContent = "检测已关闭";
+      ["bd-design","bd-full","bd-cycles","bd-temp","bd-volt","bd-health"].forEach(function (id) {
+        const e = document.getElementById(id); if (e) e.textContent = "--";
+      });
+      return;
+    }
+    try {
+      const b = await run("cat /sys/class/power_supply/battery/charge_full 2>/dev/null");
+      const d = await run("cat /sys/class/power_supply/battery/charge_full_design 2>/dev/null");
+      const c = await run("cat /sys/class/power_supply/battery/cycle_count 2>/dev/null");
+      const v = await run("cat /sys/class/power_supply/battery/voltage_now 2>/dev/null");
+      const t = await run("cat /sys/class/power_supply/battery/temp 2>/dev/null");
+      const h = await run("cat /sys/class/power_supply/battery/health 2>/dev/null");
+      const full = parseInt((b.stdout || "0").trim(), 10) || 0;
+      const design = parseInt((d.stdout || "0").trim(), 10) || 0;
+      const cycles = (c.stdout || "?").trim();
+      const volt = parseInt((v.stdout || "0").trim(), 10) || 0;
+      const temp = parseInt((t.stdout || "0").trim(), 10) || 0;
+      const health = (h.stdout || "?").trim();
+      let pct = 0;
+      if (design > 0 && full > 0) pct = Math.round(full * 100 / design);
+      const el = document.getElementById("bd-percent");
+      if (el) el.textContent = pct > 0 ? pct + "%" : "--%";
+      const set = function (id, val) { const e = document.getElementById(id); if (e) e.textContent = val; };
+      set("bd-design", design ? Math.round(design / 1000) + " mAh" : "--");
+      set("bd-full", full ? Math.round(full / 1000) + " mAh" : "--");
+      set("bd-cycles", cycles || "--");
+      set("bd-volt", volt ? (volt / 1000000).toFixed(2) + " V" : "--");
+      set("bd-temp", temp ? (temp / 10).toFixed(1) + " °C" : "--");
+      const healthMap = { Good: "优秀", Overheat: "过热", Cold: "过冷", Dead: "需更换", OverVoltage: "过压", UnspecifiedFailure: "异常", Unknown: "未知" };
+      set("bd-health", healthMap[health] || health || "--");
+      const desc = document.getElementById("bat-desc");
+      if (desc) desc.textContent = pct > 0
+        ? "健康度 " + pct + "% · " + (pct >= 90 ? "优秀" : pct >= 80 ? "良好" : "需关注")
+        : "读取失败（节点不可用）";
+    } catch (e) {}
+  }
+
+  // ===== 长图模式：展开全部内容，并在页面内渲染成 PNG 保存 =====
+  let longMode = false;
+  function longAction() {
+    if (!longMode) {
+      longMode = true;
+      document.body.classList.add("long-mode");
+      document.querySelectorAll(".page").forEach(function (p) { p.style.display = "block"; });
+      document.getElementById("long-label").textContent = "保存";
+      setStatus("长图模式已展开，点「保存」生成长图 PNG");
+    } else {
+      saveLongImage();
+    }
+  }
+
+  // 把当前页面渲染成 PNG 并保存到 Download
+  async function saveLongImage() {
+    setStatus("正在渲染长图（约 5-15 秒）…");
+    try {
+      if (typeof html2canvas !== "function") { setStatus("长图库未加载，无法生成"); return; }
+      const fullH = Math.max(document.body.scrollHeight, document.documentElement.scrollHeight);
+      const canvas = await html2canvas(document.body, {
+        backgroundColor: "#f5f6f8",
+        useCORS: true,
+        logging: false,
+        scrollX: 0,
+        scrollY: 0,
+        windowWidth: window.innerWidth,
+        windowHeight: fullH,
+        width: window.innerWidth,
+        height: fullH
+      });
+      setStatus("正在保存图片…");
+      const b64 = canvas.toDataURL("image/png").split(",")[1];
+      const ok = await writeB64(b64, "/sdcard/Download/redmagic_long.png");
+      if (ok) {
+        setStatus("长图已保存：/sdcard/Download/redmagic_long.png");
+      } else {
+        setStatus("保存失败（可能图片过大）");
+      }
+    } catch (e) {
+      setStatus("长图生成失败：" + e);
+    }
+  }
+
+  // base64 分块写入文件（规避命令行长度限制）
+  async function writeB64(b64, dst) {
+    const tmp = "/data/local/tmp/rmc_shot.b64";
+    await run("rm -f " + tmp + " " + dst);
+    const CHUNK = 30000;
+    for (let i = 0; i < b64.length; i += CHUNK) {
+      const part = b64.slice(i, i + CHUNK);
+      await run("printf '%s' '" + part + "' >> " + tmp);
+    }
+    const r = await run("base64 -d " + tmp + " > " + dst + " 2>/dev/null; ls -l " + dst + " 2>/dev/null | head -1");
+    await run("rm -f " + tmp);
+    return (r.stdout || "").indexOf(dst) !== -1;
+  }
+
+  // ===== 滑动分页：手势一划一页，底部圆点跟随 =====
+  let PG_INDEX = 0;
+  async function genLogInline() {
+    const out = document.getElementById("log-view");
+    if (out) out.textContent = "正在采集诊断信息…";
+    const logPath = MOD + "/last_log.txt";
+    await run("rm -f " + logPath + " 2>/dev/null");
+    const r = await run("sh " + MOD + "/log.sh '" + logPath + "' 2>&1");
+    let lines = 0, txt = "";
+    for (let i = 0; i < 3; i++) {
+      const c = await run("wc -l < " + logPath + " 2>/dev/null");
+      lines = parseInt((c.stdout || "0").trim(), 10) || 0;
+      const h = await run("sed -n '1,20p' " + logPath + " 2>/dev/null | tr -d '\r'");
+      txt = (h.stdout || "").trim();
+      if (txt.length > 60) break;
+      await new Promise(function (res) { setTimeout(res, 1500); });
+    }
+    const lm = document.getElementById("log-meta");
+    if (lm) {
+      try {
+        const mm = await readStateAll();
+        const onN = STATE_KEYS.filter(function (k) { return mm[k] === "1"; }).length;
+        const td = await run("cat /sys/class/power_supply/battery/temp 2>/dev/null");
+        let tp = parseInt((td.stdout || "").trim(), 10);
+        tp = isNaN(tp) ? "-" : Math.round(tp / 10);
+        const fd = await run("cat /sys/kernel/fan/fan_speed_level 2>/dev/null");
+        const fl = (fd.stdout || "").trim() || "0";
+        lm.innerHTML = '<span class="lm">机型 <b>' + (MODEL_INFO.model || "-") + '</b></span>' +
+          '<span class="lm">电池 <b>' + tp + ' ℃</b></span>' +
+          '<span class="lm">风扇 <b>' + fl + ' 档</b></span>' +
+          '<span class="lm">已启用 <b>' + onN + ' 项</b></span>';
+      } catch (e) {}
+    }
+    const cnt = document.getElementById("log-count");
+    if (txt) {
+      let body = txt;
+      if (lines > 20) body += "\n… 共 " + lines + " 行，完整日志见上方路径";
+      if (out) out.textContent = body;
+      if (cnt) cnt.textContent = String(lines || txt.split("\n").length);
+      setStatus("诊断日志已生成：" + logPath + "（" + (lines || "?") + " 行）");
+      return;
+    }
+    const env = [
+      "采集失败，以下为诊断信息",
+      "log.sh 返回 errno=" + (r.errno === undefined ? "-" : r.errno),
+      "stdout=" + ((r.stdout || "").trim() || "(空)"),
+      "stderr=" + ((r.stderr || "").trim() || "(空)"),
+      "uid=" + ((await run("id -u 2>/dev/null")).stdout || "").trim(),
+      "文件=" + ((await run("ls -l " + logPath + " 2>/dev/null")).stdout || "").trim(),
+      "目录=" + ((await run("ls -ld " + STATE + " 2>/dev/null")).stdout || "").trim(),
+      "",
+      "设置快照："
+    ].join("\n");
+    const d = await run("sh " + MOD + "/cfg.sh dump 2>/dev/null");
+    const snapshot = (d.stdout || "").trim();
+    if (out) out.textContent = env + "\n" + (snapshot || "(读不到设置，检查模块是否已安装并被管理器启用)");
+    if (cnt) cnt.textContent = "0";
+    setStatus("日志采集失败：errno=" + (r.errno === undefined ? "-" : r.errno) + " " + ((r.stderr || "").trim()));
+  }
+
+  function copyLogText() {
+    const o = document.getElementById("log-view");
+    const t = o ? o.textContent : "";
+    try {
+      navigator.clipboard.writeText(t);
+      setStatus("日志已复制到剪贴板");
+    } catch (e) {
+      setStatus("复制失败，请长按文本手动选择");
+    }
+  }
+
+  function clearLogText() {
+    const o = document.getElementById("log-view");
+    if (o) o.textContent = "";
+    const cnt = document.getElementById("log-count");
+    if (cnt) cnt.textContent = "0";
+    setStatus("日志窗口已清空");
+  }
+
+  // ===== 分类导航（大类 + 二级卡片）=====
+  const NAV_META = [
+    { t: "概览", icon: '<svg viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="3"/><path d="M8 8h8M8 12h8M8 16h4"/></svg>' },
+    { t: "性能与散热", icon: '<svg viewBox="0 0 24 24"><path d="M4 17a8 8 0 0 1 16 0"/><path d="M12 17l4.2-5.4"/><circle cx="12" cy="17" r="1.1"/></svg>' },
+    { t: "触控与振感", icon: '<svg viewBox="0 0 24 24"><path d="M8 3v4M16 3v4M5 7h14v5a7 7 0 0 1-14 0z"/><path d="M12 19v2"/></svg>' },
+    { t: "网络与系统", icon: '<svg viewBox="0 0 24 24"><path d="M3 9a14 14 0 0 1 18 0M6 12a9 9 0 0 1 12 0M9 15a4 4 0 0 1 6 0"/><circle cx="12" cy="19" r="1"/></svg>' },
+    { t: "游戏与显示", icon: '<svg viewBox="0 0 24 24"><rect x="3" y="8" width="18" height="9" rx="4.5"/><path d="M8 12.5h3M9.5 11v3"/><circle cx="15.2" cy="11.8" r="1.1"/><circle cx="17.4" cy="13.6" r="1.1"/></svg>' },
+    { t: "诊断与日志", icon: '<svg viewBox="0 0 24 24"><path d="M5 4h11l3 3v13H5z"/><path d="M8 9h7M8 13h7M8 17h4"/></svg>' }
+  ];
+  var NAV = [];
+
+  function buildNav() {
+    const pg = document.getElementById("pager");
+    const box = document.getElementById("dnav");
+    if (!pg || !box || !pg.children.length) return;
+    NAV = [];
+    for (let i = 0; i < pg.children.length; i++) {
+      const pageEl = pg.children[i];
+      const cards = Array.prototype.slice.call(pageEl.querySelectorAll(".card")).filter(function (c) { return c.querySelector("h3"); });
+      const items = cards.map(function (c, j) {
+        c.dataset.sec = i + "-" + j;
+        return { t: (c.querySelector("h3").textContent || "").trim(), el: c };
+      });
+      const meta = NAV_META[i] || NAV_META[0];
+      NAV.push({ page: i, t: meta.t, icon: meta.icon, items: items, el: pageEl });
+    }
+    box.innerHTML = NAV.map(function (g, gi) {
+      return '<div class="dgroup" data-g="' + gi + '">' +
+        '<button class="dgh" onclick="toggleGroup(' + gi + ')">' + g.icon + '<span>' + g.t + '</span>' +
+        '<span class="dcount">' + g.items.length + '</span>' +
+        '<svg class="chev" viewBox="0 0 24 24"><path d="M8 10l4 4 4-4"/></svg></button>' +
+        '<div class="dsubs">' + g.items.map(function (it, si) {
+          return '<button class="dsub" data-p="' + gi + '" data-s="' + si + '" onclick="goSection(' + gi + ',' + si + ')">' + it.t + '</button>';
+        }).join("") + '</div></div>';
+    }).join("");
+    // 缓存二级按钮，避免每次滚动全量查询
+    NAV.forEach(function (g, gi) {
+      g.btns = Array.prototype.slice.call(box.querySelectorAll('.dsub[data-p="' + gi + '"]'));
+      g.lastSec = -1;
+      g.raf = 0;
+      g.el.addEventListener("scroll", function () {
+        if (g.raf) return;
+        g.raf = requestAnimationFrame(function () {
+          g.raf = 0;
+          const si = nearestSection(gi);
+          if (si === g.lastSec) return;
+          syncNav(gi, si);
+        });
+      }, { passive: true });
+    });
+    syncNav(0, nearestSection(0));
+  }
+
+  function openGroup(g, instant) {
+    const subs = g.querySelector(".dsubs");
+    if (!subs) return;
+    g.classList.add("open");
+    const h = subs.scrollHeight;
+    if (instant) { subs.style.transition = "none"; subs.style.maxHeight = h + "px"; void subs.offsetHeight; subs.style.transition = ""; }
+    else { subs.style.maxHeight = h + "px"; }
+  }
+
+  function closeGroup(g) {
+    const subs = g.querySelector(".dsubs");
+    if (!subs) return;
+    const h = subs.scrollHeight;
+    subs.style.maxHeight = h + "px";
+    g.classList.remove("open");
+    requestAnimationFrame(function () { subs.style.maxHeight = "0px"; });
+  }
+
+  function toggleGroup(gi) {
+    const target = document.querySelector('.dgroup[data-g="' + gi + '"]');
+    if (!target) return;
+    const willOpen = !target.classList.contains("open");
+    document.querySelectorAll(".dgroup").forEach(function (d) {
+      if (d !== target && d.classList.contains("open")) closeGroup(d);
+    });
+    if (willOpen) openGroup(target, false); else closeGroup(target);
+  }
+
+  function nearestSection(p) {
+    const g = NAV[p];
+    if (!g) return 0;
+    const st = g.el.scrollTop + 96;
+    let idx = 0;
+    g.items.forEach(function (it, i) { if (it.el.offsetTop <= st) idx = i; });
+    return idx;
+  }
+
+  function syncNav(p, si) {
+    if (!NAV.length || !NAV[p]) return;
+    const heads = document.querySelectorAll(".dgh");
+    heads.forEach(function (d, i) { d.classList.toggle("on", i === p); });
+    NAV.forEach(function (g, gi) {
+      if (g.btns) g.btns.forEach(function (b, i) { b.classList.toggle("on", gi === p && i === si); });
+    });
+    const g = NAV[p];
+    if (g && g.lastSec !== si) g.lastSec = si;
+    updateCrumb(p, si);
+  }
+
+  function updateCrumb(p, si) {
+    const c = document.getElementById("crumb");
+    const g = NAV[p];
+    if (!c || !g) return;
+    const it = g.items[si];
+    document.getElementById("crumb-g").textContent = g.t;
+    document.getElementById("crumb-s").textContent = it ? it.t : "";
+    document.getElementById("crumb-n").textContent = it ? (si + 1) + "/" + g.items.length : "";
+    c.classList.add("on");
+    clearTimeout(window.__crumbTimer);
+    window.__crumbTimer = setTimeout(function () { c.classList.remove("on"); }, 2400);
+  }
+
+  function goSection(p, si) {
+    const g = NAV[p];
+    if (!g || !g.items[si]) { goPage(p); return; }
+    closeDrawer();
+    goPage(p);
+    const target = g.items[si].el;
+    setTimeout(function () {
+      const y = target.offsetTop - 10;
+      g.el.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+      syncNav(p, si);
+    }, 320);
+  }
+
+  function goPage(n) {
+    const pg = document.getElementById("pager");
+    if (!pg) return;
+    const total = pg.children.length;
+    n = Math.max(0, Math.min(total - 1, n));
+    PG_INDEX = n;
+    pg.scrollTo({ left: pg.clientWidth * n, behavior: "smooth" });
+    document.querySelectorAll(".pdot,.nv").forEach(function (d, i) {
+      let idx = i;
+      if (d.classList.contains("nv")) idx = parseInt(d.dataset.i, 10);
+      d.classList.toggle("on", idx === n);
+    });
+    closeDrawer();
+    setTimeout(function () { if (PG_INDEX === n) syncNav(n, nearestSection(n)); }, 460);
+  }
+  // 底部圆点点击切页（外观不变，仅增加点击）
+  document.querySelectorAll(".pdot").forEach(function (d, i) {
+    d.onclick = function () { goPage(i); };
+  });
+
+  buildNav();
+
+  // 接收游戏助手 iframe 转发过来的滑动
+  window.addEventListener("message", function (ev) {
+    if (ev && ev.data && typeof ev.data.yhSwipe === "number") {
+      goPage(PG_INDEX + ev.data.yhSwipe);
+    }
+  });
+
+  // 接收游戏工具 iframe 的命令请求（iframe 拿不到 ksu，由外层代执行）
+  window.addEventListener("message", async function (ev) {
+    if (!ev || !ev.data || !ev.data.gameExec || !ev.data.id) return;
+    try {
+      const r = await run(ev.data.gameExec);
+      ev.source.postMessage({ gameExecResult: ev.data.id, stdout: r.stdout || "", errno: r.errno }, "*");
+    } catch (e) {
+      ev.source.postMessage({ gameExecResult: ev.data.id, stdout: "", errno: -1 }, "*");
+    }
+  });
+  (function initPager() {
+    const pg = document.getElementById("pager");
+    if (!pg) return;
+    let sx = 0, sy = 0, swipeBlocked = false, sTop = 0;
+    pg.addEventListener("touchstart", function (e) {
+      if (!e.touches || !e.touches.length) return;
+      // 交互控件（滑条/按钮/输入框）上的触摸不触发翻页
+      const t = e.target;
+      swipeBlocked = !!(t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.tagName === "SELECT" ||
+        (t.closest && (t.closest(".torch-slider") || t.closest("button")))));
+      if (swipeBlocked) return;
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+      const pe = pg.children[PG_INDEX];
+      sTop = pe ? pe.scrollTop : 0;
+    }, { passive: true });
+    pg.addEventListener("touchend", function (e) {
+      if (LOCK_SWIPE) return;
+      if (swipeBlocked) return;
+      if (!e.changedTouches || !e.changedTouches.length) return;
+      const dx = e.changedTouches[0].clientX - sx;
+      const dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 60 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+        goPage(dx < 0 ? PG_INDEX + 1 : PG_INDEX - 1);
+        return;
+      }
+      // 上下滑：滚到顶部再下拉=上一项，滚到底再上拉=下一项
+      if (Math.abs(dy) > 70 && Math.abs(dy) > Math.abs(dx) * 1.6 && NAV.length) {
+        const pe = pg.children[PG_INDEX];
+        if (!pe) return;
+        const atTop = sTop <= 6;
+        const atBottom = sTop + pe.clientHeight >= pe.scrollHeight - 8;
+        const si = nearestSection(PG_INDEX);
+        if (dy > 0 && atTop && si > 0) goSection(PG_INDEX, si - 1);
+        else if (dy < 0 && atBottom && si < NAV[PG_INDEX].items.length - 1) goSection(PG_INDEX, si + 1);
+      }
+    }, { passive: true });
+  })();
+
+  // 生成诊断日志到 /sdcard/Download（弹层显示结果）
+  async function genLog() {
+    setStatus("正在生成诊断日志…");
+    const r = await run("sh " + MOD + "/log.sh 2>/dev/null");
+    const out = (r.stdout || "").trim();
+    let path = "";
+    out.split("\n").forEach(l => { if (l.trim().indexOf("/sdcard/") === 0) path = l.trim(); });
+    document.getElementById("sheet-title").textContent = "诊断日志";
+    document.getElementById("sheet-body").innerHTML = path
+      ? '<p>日志已生成：</p><p style="word-break:break-all;color:#2f9e6e;">' + path + '</p><p>用文件管理器打开 Download 目录，把文件发给作者。</p>'
+      : '<p>日志生成失败：' + (out || "无输出") + '</p>';
+    document.getElementById("sheet").classList.add("open");
+    setStatus(path ? "日志已生成 ✓" : "日志生成失败");
+  }
+
+  async function openSheet(key) {
+    const cfg = SHEETS[key];
+    document.getElementById("sheet-title").textContent = cfg.title;
+    document.getElementById("sheet-body").innerHTML = "<p>读取中…</p>";
+    document.getElementById("sheet").classList.add("open");
+    if (key === "reward") {
+      document.getElementById("sheet-body").innerHTML =
+        '<img src="reward.png" alt="赞赏码" style="width:100%;border-radius:14px;display:block;">' +
+        '<p style="text-align:center;margin-top:10px;color:#8a93a2;">扫码赞赏，感谢支持 🙏</p>';
+      return;
+    }
+    const body = await cfg.body();
+    document.getElementById("sheet-body").innerHTML =
+      body.split("\n").map(l => "<p>" + l.replace(/</g, "&lt;") + "</p>").join("");
+  }
+
+  function closeSheet(ev) {
+    if (ev && ev.target && !ev.target.classList.contains("sheet")) return;
+    document.getElementById("sheet").classList.remove("open");
+  }
+
+  // 查找可用的 WebUI 注入接口（兼容多种管理器命名）
+  function findApi() {
+    const cands = ["ksu", "ksud", "KSU", "KernelSU", "ksuExec", "ksuBridge", "ksuWebUI", "webui", "Android"];
+    for (const n of cands) {
+      try {
+        const v = window[n];
+        if (v && typeof v.exec === "function") return { api: v, name: n };
+      } catch (e) {}
+    }
+    // 兜底：扫描 window 上所有带 exec 的对象
+    for (const k of Object.keys(window)) {
+      try {
+        const v = window[k];
+        if (v && typeof v === "object" && typeof v.exec === "function") return { api: v, name: k };
+      } catch (e) {}
+    }
+    return null;
+  }
+
+  async function waitApi(timeoutMs) {
+    const t0 = Date.now();
+    while (Date.now() - t0 < timeoutMs) {
+      const f = findApi();
+      if (f) return f;
+      await new Promise(r => setTimeout(r, 250));
+    }
+    return null;
+  }
+
+  function diagText() {
+    const lines = [];
+    const keys = Object.keys(window).filter(k => /ksu|exec|webui|shell|bridge|native|android|toast|root/i.test(k));
+    lines.push("window: " + (keys.length ? keys.map(k => k + "(" + typeof window[k] + ")").join(", ") : "无相关对象"));
+
+    const api = window.__ksuApi || window.ksu;
+    if (api && typeof api === "object") {
+      try {
+        const props = Object.getOwnPropertyNames(api);
+        lines.push("ksu 成员: " + props.join(", "));
+        for (const p of props) {
+          let t = "?";
+          try { t = typeof api[p]; } catch (e) {}
+          lines.push("  · " + p + " = " + t);
+        }
+      } catch (e) {
+        lines.push("取成员失败: " + e);
+      }
+    }
+    return lines.join("\n");
+  }
+
+  async function testExec(api) {
+    const out = [];
+    const tests = [
+      ["exec(cmd)", () => api.exec("echo hi")],
+      ["exec(cmd,{})", () => api.exec("echo hi", {})],
+      ["exec(cmd,cb)", () => new Promise(r => api.exec("echo hi", (c, o, e) => r(o)))],
+      ["exec(cmd,{},cb)", () => new Promise(r => api.exec("echo hi", {}, (c, o, e) => r(o)))],
+      ["run(cmd)", () => api.run && api.run("echo hi")],
+      ["shell(cmd)", () => api.shell && api.shell("echo hi")],
+    ];
+    for (const [name, fn] of tests) {
+      try {
+        if (!fn) continue;
+        const v = await Promise.race([
+          Promise.resolve(fn()),
+          new Promise(r => setTimeout(() => r("__TIMEOUT__"), 700))
+        ]);
+        let s;
+        if (v === "__TIMEOUT__") s = "TIMEOUT";
+        else if (v && typeof v === "object") s = JSON.stringify(v).slice(0, 100);
+        else s = String(v).slice(0, 100);
+        out.push(name + " → " + s);
+      } catch (e) {
+        out.push(name + " → ERR: " + String(e).slice(0, 100));
+      }
+    }
+    return out.join("\n");
+  }
+
+
+  function openDrawer() {
+    const d = document.getElementById("drawer");
+    const sc = document.getElementById("scrim");
+    if (d) d.classList.add("open");
+    if (sc) sc.classList.add("on");
+    const pg = document.getElementById("pager");
+    if (pg && NAV.length) {
+      const n = Math.round(pg.scrollLeft / pg.clientWidth);
+      if (NAV[n]) {
+        syncNav(n, nearestSection(n));
+        const g = document.querySelector('.dgroup[data-g="' + n + '"]');
+        if (g && !g.classList.contains("open")) openGroup(g, true);
+      }
+    }
+  }
+  function closeDrawer() {
+    const d = document.getElementById("drawer");
+    const sc = document.getElementById("scrim");
+    if (d) d.classList.remove("open");
+    if (sc) sc.classList.remove("on");
+  }
+
+  // ===== 外观（5 套主题，在设置里切换，存 localStorage）=====
+  const SKINS = [
+    { id: "A", name: "石墨", desc: "中性灰 · 默认", c: "#71717a" },
+    { id: "B", name: "钴蓝", desc: "冷静蓝 · 数据感", c: "#2563eb" },
+    { id: "C", name: "纸墨", desc: "暖白纸 · 细边", c: "#1c1917" },
+    { id: "D", name: "霓虹", desc: "深空青 · 发光", c: "#22d3ee" },
+    { id: "E", name: "柔光", desc: "青绿 · 大圆角", c: "#0d9488" }
+  ];
+
+  function applySkin(id) {
+    const ok = SKINS.some(function (s) { return s.id === id; }) ? id : "A";
+    document.documentElement.dataset.skin = ok;
+    try { localStorage.setItem("rm_skin", ok); } catch (e) {}
+    if (typeof persist === "function") persist("ui_skin", ok);
+    if (typeof pushTheme === "function") pushTheme();
+  }
+
+  function skinRows() {
+    const cur = document.documentElement.dataset.skin || "A";
+    return SKINS.map(function (s) {
+      return '<button class="skin-row' + (s.id === cur ? ' on' : '') + '" data-skin="' + s.id + '" onclick="setSkin(\'' + s.id + '\')">' +
+        '<span class="skin-dot" style="background:' + s.c + '"></span>' +
+        '<span class="skin-txt"><b>' + s.name + '</b><small>' + s.desc + '</small></span>' +
+        '<span class="skin-tick">' + (s.id === cur ? '✓' : '') + '</span></button>';
+    }).join("");
+  }
+
+  function setSkin(id) {
+    applySkin(id);
+    const body = document.getElementById("skin-list");
+    if (body) body.innerHTML = skinRows();
+    const s = SKINS.filter(function (x) { return x.id === id; })[0];
+    toast("外观已切换：" + (s ? s.name : id));
+  }
+
+  function openSettings() {
+    closeDrawer();
+    const light = document.documentElement.classList.contains("light");
+    document.getElementById("sheet-title").textContent = "外观与显示";
+    document.getElementById("sheet-body").innerHTML =
+      '<div class="set-row"><div><b>深色模式</b><small>跟随你的阅读习惯，立即生效</small></div>' +
+      '<button class="sw' + (light ? "" : " on") + '" onclick="toggleTheme();openSettings()"><i></i></button></div>' +
+      '<div class="set-cap">界面风格</div><div id="skin-list">' + skinRows() + '</div>' +
+      '<p class="set-tip">开关与档位保存在模块目录 settings.txt，重进或重启后自动恢复。</p>' +
+      '<div class="set-cap">设置备份</div>' +
+      '<div class="levels" style="margin-top:2px">' +
+      '<button class="btn outline sm" onclick="exportSettings()">导出</button>' +
+      '<button class="btn outline sm" onclick="importSettings()">导入</button>' +
+      '<button class="btn ghost sm" onclick="resetSettings()">恢复默认</button>' +
+      '</div>' +
+      '<p class="set-tip">导出到 Download/redmagic_settings.txt；导入时把同名文件放回 Download 再点。恢复默认会清空所有开关与外观。</p>';
+    document.getElementById("sheet").classList.add("open");
+  }
+
+  function closeSettings() { closeSheet(); }
+
+  // ===== 风扇曲线 / 场景定时 / 充电养护 / 自检 / 备份 =====
+  async function saveFanCurve() {
+    const g = function (id) { const e = document.getElementById(id); return parseInt((e && e.value || "").trim(), 10); };
+    const t3 = g("fan-t3"), t4 = g("fan-t4"), t5 = g("fan-t5"), h = g("fan-hyst");
+    if (!(t3 > 0 && t4 > t3 && t5 > t4)) { toast("三个温度点要递增，例如 30 / 35 / 40", true); return; }
+    const hh = (h >= 0 && h <= 10) ? h : 2;
+    await persist("fan_t3", t3); await persist("fan_t4", t4);
+    await persist("fan_t5", t5); await persist("fan_hyst", hh);
+    toast("曲线已保存：" + t3 + "° 3 档 · " + t4 + "° 4 档 · " + t5 + "° 5 档 · 回滞 " + hh + "°");
+    setStatus("风扇曲线：" + t3 + " / " + t4 + " / " + t5 + "℃，回滞 " + hh + "℃");
+  }
+
+  async function saveAutomation() {
+    const st = (document.getElementById("night-start").value || "23:00").trim();
+    const en = (document.getElementById("night-end").value || "07:00").trim();
+    const tw = parseInt((document.getElementById("temp-wall").value || "0").trim(), 10) || 0;
+    await persist("night_start", st); await persist("night_end", en);
+    await persist("temp_wall", tw);
+    toast(tw > 0 ? ("定时已保存，温度墙 " + tw + "℃") : "定时已保存，温度墙关闭");
+    setStatus("夜间 " + st + "–" + en + "，温度墙 " + (tw > 0 ? tw + "℃" : "关闭"));
+  }
+
+  function openSceneSheet() {
+    closeDrawer();
+    document.getElementById("sheet-title").textContent = "场景策略";
+    document.getElementById("sheet-body").innerHTML =
+      '<p class="set-tip">每行一个包名，命中前台就切到下面的风扇档位并开触控增强，退出后还原。</p>' +
+      '<textarea id="scene-apps-box" class="inp" style="width:100%;height:150px;padding:10px;line-height:1.7" placeholder="com.tencent.tmgp.sgame&#10;com.tencent.tmgp.pubgmhd"></textarea>' +
+      '<div class="set-cap">场景风扇档位</div>' +
+      '<div class="levels" id="scene-lv">' +
+      '<button class="lv" data-sf="3">3 档</button><button class="lv" data-sf="4">4 档</button><button class="lv" data-sf="5">5 档</button>' +
+      '</div>' +
+      '<button class="btn wide" style="margin-top:12px" onclick="saveScene()">保存场景名单</button>';
+    run("cat " + STATE + "/scene_apps 2>/dev/null").then(function (r) {
+      const box = document.getElementById("scene-apps-box");
+      if (box) box.value = (r.stdout || "").split(",").map(function (x) { return x.trim(); }).filter(Boolean).join("\n");
+    });
+    run("cat " + STATE + "/scene_fan 2>/dev/null").then(function (r) {
+      const v = (r.stdout || "5").trim();
+      document.querySelectorAll("[data-sf]").forEach(function (b) {
+        b.classList.toggle("on", b.dataset.sf === v);
+        b.onclick = function () { document.querySelectorAll("[data-sf]").forEach(function (x) { x.classList.toggle("on", x === b); }); };
+      });
+    });
+    document.getElementById("sheet").classList.add("open");
+  }
+
+  async function saveScene() {
+    const raw = (document.getElementById("scene-apps-box").value || "").split("\n").map(function (x) { return x.trim(); }).filter(Boolean);
+    const lvBtn = document.querySelector("[data-sf].on");
+    const lv = lvBtn ? parseInt(lvBtn.dataset.sf, 10) : 5;
+    await persist("scene_apps", raw.join(","));
+    await persist("scene_fan", lv);
+    const sd = document.getElementById("scene-desc");
+    if (sd) sd.textContent = raw.length ? ("已选 " + raw.length + " 个应用 · " + lv + " 档") : "未选择应用";
+    closeSheet();
+    toast(raw.length ? ("场景已保存：" + raw.length + " 个应用，" + lv + " 档") : "场景名单已清空");
+  }
+
+  async function saveBatLimit(v) {
+    await persist("bat_limit", v);
+    document.querySelectorAll("[data-b]").forEach(function (b) { b.classList.toggle("on", (b.dataset.b || "0") === String(v)); });
+    const node = "/sys/class/power_supply/battery/charge_control_end_threshold";
+    if (v > 0) {
+      const r = await run("if [ -e " + node + " ]; then chmod 644 " + node + " 2>/dev/null; echo " + v + " > " + node + " 2>/dev/null; cat " + node + "; else echo NO_NODE; fi");
+      const out = (r.stdout || "").trim();
+      if (out === "NO_NODE") toast("本机没有充电上限节点，仅保存设置，由服务尝试系统接口", true);
+      else toast("养护上限已设为 " + v + "%（节点回读 " + out + "）");
+    } else toast("养护上限已关闭");
+  }
+
+  async function nodeCheck() {
+    const out = document.getElementById("log-view");
+    const doc = document.getElementById("log-count");
+    const list = [
+      ["风扇开关", "/sys/kernel/fan/fan_enable"],
+      ["风扇档位", "/sys/kernel/fan/fan_speed_level"],
+      ["风扇档数", "/sys/kernel/fan/fan_speed_count"],
+      ["液冷开关", "/proc/driver/micropump/enable"],
+      ["液冷频率", "/proc/driver/micropump/freq"],
+      ["液冷速度", "/proc/driver/micropump/speed"],
+      ["电池温度", "/sys/class/power_supply/battery/temp"],
+      ["电池电流", "/sys/class/power_supply/battery/current_now"],
+      ["电池电压", "/sys/class/power_supply/battery/voltage_now"],
+      ["充电上限", "/sys/class/power_supply/battery/charge_control_end_threshold"],
+      ["触控采样", "/proc/touchscreen/tp_report_rate"],
+      ["跟手等级", "/proc/touchscreen/follow_hand_level"],
+      ["振动增益", "/sys/class/leds/vibrator/gain"]
+    ];
+    const vals = [];
+    const errs = [];
+    for (let i = 0; i < list.length; i++) {
+      if (out) out.textContent = "正在检查 " + (i + 1) + " / " + list.length + "…\n\n已读：" + vals.length;
+      const r = await run("cat " + list[i][1] + " 2>&1 | head -c 80");
+      let v = (r.stdout || "").replace(/\r/g, " ").replace(/\n/g, " ").trim();
+      if (v.indexOf("No such file") >= 0 || v.indexOf("Permission denied") >= 0) { errs.push(list[i][0] + ": " + v); v = ""; }
+      vals.push(v);
+    }
+    let txt = "节点自检（✓ 可用，✗ 本机没有该节点）\n\n";
+    let ok = 0;
+    list.forEach(function (n, j) {
+      const v = vals[j] || "-";
+      const has = v && v !== "-";
+      if (has) ok++;
+      txt += (has ? "✓ " : "✗ ") + n[0] + "  " + n[1] + " = " + v + "\n";
+    });
+    if (errs.length) txt += "\n首个失败原因：" + errs[0] + "\n";
+    if (out) out.textContent = txt;
+    if (doc) doc.textContent = String(list.length);
+    const lm = document.getElementById("log-meta");
+    if (lm) lm.innerHTML = '<span class="lm">节点自检 ' + ok + " / " + list.length + " 可用</span>";
+    setStatus("节点自检完成：" + ok + " / " + list.length + " 个节点可用");
+  }
+
+  async function exportSettings() {
+    const p = "/sdcard/Download/redmagic_settings.txt";
+    const r = await run("mkdir -p /sdcard/Download 2>/dev/null; cp " + MOD + "/settings.txt " + p + " 2>/dev/null; wc -l < " + p + " 2>/dev/null");
+    const n = (r.stdout || "").trim();
+    if (n && parseInt(n, 10) > 0) { toast("已导出 " + n + " 行到 Download/redmagic_settings.txt"); setStatus("设置已导出：" + p); }
+    else { toast("导出失败：无法写入 Download", true); setStatus("导出失败：" + (r.stderr || "权限不足")); }
+  }
+
+  async function importSettings() {
+    const p = "/sdcard/Download/redmagic_settings.txt";
+    const r = await run("if [ -f " + p + " ]; then cp " + p + " " + MOD + "/settings.txt; sh " + MOD + "/cfg.sh restore; echo OK; else echo MISS; fi");
+    if ((r.stdout || "").indexOf("OK") >= 0) {
+      await refreshAll();
+      toast("已从 Download 导入设置");
+      setStatus("设置已导入并回读");
+    } else { toast("Download 里没有 redmagic_settings.txt", true); }
+  }
+
+  async function resetSettings() {
+    if (!window.confirm("确定清空所有开关、档位与外观，恢复默认？")) return;
+    await run("rm -rf " + STATE + " 2>/dev/null; rm -f " + MOD + "/settings.txt 2>/dev/null");
+    await refreshAll();
+    toast("已恢复默认");
+    setStatus("已清空设置，所有增强回到初始状态");
+  }
+
+
+  (async function init() {
+    try { applySkin(localStorage.getItem("rm_skin") || "A"); } catch (e) {}
+    setStatus("正在查找 WebUI 接口…");
+    const found = await waitApi(6000);
+    if (!found) {
+      const rt = document.getElementById("run-text");
+      if (rt) rt.textContent = "OFFLINE";
+      showAlert("未找到 WebUI 接口（6 秒）：请在管理器内打开本模块的 WebUI");
+      setStatus("WebUI 接口未找到（6 秒）。诊断信息：\n" + diagText());
+      return;
+    }
+    const api = found.api;
+    window.__ksuApi = api;
+    window.__ksuName = found.name;
+    await loadModelInfo();
+    renderTags();
+    battRefresh();
+    setInterval(function () { if (typeof PG_INDEX === "undefined" || PG_INDEX === 0) battRefresh(); }, 10000);
+    const r = await run("mkdir -p " + STATE + " && echo ok");
+    if (r.errno !== 0) {
+      const rt = document.getElementById("run-text");
+      if (rt) rt.textContent = "OFFLINE";
+      const detail = await testExec(api);
+      showAlert("执行接口不可用：" + (r.stderr || ("errno=" + r.errno)) + "（需要 root 权限）");
+      setStatus("接口 " + found.name + " 的 exec 调用失败（" + (r.stderr || "errno=" + r.errno) + "）\n\n探测结果：\n" + detail + "\n\n" + diagText());
+      return;
+    }
+    hideAlert();
+    setStatus("已连接（接口 " + found.name + "），读取状态…");
+    await refreshAll();
+    const sc = await run("cat " + STATE + "/ui_skin 2>/dev/null");
+    const sk = (sc.stdout || "").trim();
+    if (sk) applySkin(sk);
+    const tc = await run("cat " + STATE + "/ui_theme 2>/dev/null");
+    const th = (tc.stdout || "").trim();
+    if (th === "light") document.documentElement.classList.add("light");
+    if (th === "dark") document.documentElement.classList.remove("light");
+    setStatus("就绪 · 开关即时生效");
+  })();
+
+</script>
+</body>
+</html>

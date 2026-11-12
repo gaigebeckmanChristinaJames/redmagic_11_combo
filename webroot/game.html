@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>游戏环境工具</title>
+<style>
+  :root{
+    --canvas:#07080a;--surface:#0d0d0d;--elev:#101111;--card:#121212;
+    --line:#242728;--line2:rgba(255,255,255,.06);
+    --ink:#f4f4f6;--body:#cdcdcd;--mute:#9c9c9d;--ash:#6a6b6c;
+    --red:#ff6161;--redsoft:rgba(255,97,97,.15);--redline:rgba(255,97,97,.34);
+    --cta:#ffffff;--ctafg:#000000;
+    --sans:"Inter",-apple-system,"SF Pro Text","PingFang SC","Noto Sans SC",system-ui,sans-serif;
+  }
+  html.light{
+    --canvas:#f5f5f7;--surface:#ffffff;--elev:#f1f1f4;--card:#ffffff;
+    --line:#e3e4e8;--line2:rgba(16,18,22,.06);
+    --ink:#111214;--body:#33353a;--mute:#6f727a;--ash:#a3a6ad;
+    --red:#d92d2d;--redsoft:rgba(217,45,45,.10);--redline:rgba(217,45,45,.28);
+    --cta:#111214;--ctafg:#ffffff;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  body{margin:0;padding:0 0 2px;color:var(--body);background:transparent;
+    font-family:var(--sans);font-size:13px;-webkit-font-smoothing:antialiased;
+    font-feature-settings:"calt","kern","liga";font-variant-numeric:tabular-nums;}
+  .head{display:flex;align-items:center;gap:10px;padding:2px 2px 12px;}
+  .logo{width:36px;height:36px;border-radius:8px;flex:none;
+    background:linear-gradient(135deg,#ff5757,#a1131a);
+    display:flex;align-items:center;justify-content:center;}
+  .logo svg{width:19px;height:19px;stroke:#fff;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+  .head h1{font-size:15px;margin:0;font-weight:600;color:var(--ink);letter-spacing:.2px;}
+  .head small{display:block;color:var(--ash);font-size:9.5px;margin-top:3px;letter-spacing:1.6px;}
+  .card{background:var(--elev);border:1px solid var(--line);border-radius:10px;padding:13px;margin-bottom:9px;}
+  .card h2{margin:0 0 4px;font-size:13.5px;font-weight:600;color:var(--ink);}
+  .card p{margin:0;color:var(--mute);font-size:11px;line-height:1.55;}
+  .row{display:flex;gap:8px;margin-top:10px;align-items:center;}
+  input{flex:1;min-width:0;height:36px;padding:0 11px;border-radius:8px;font-size:12.5px;
+    border:1px solid var(--line);background:var(--card);color:var(--ink);outline:none;}
+  input:focus{border-color:var(--redline);box-shadow:0 0 0 3px var(--redsoft)}
+  .btn{height:36px;padding:0 14px;border-radius:8px;font-size:12.5px;font-weight:500;
+    color:var(--ctafg);border:none;cursor:pointer;background:var(--cta);flex-shrink:0;white-space:nowrap;font-family:inherit;}
+  .btn:active{opacity:.82}
+  .btn.gray{background:transparent;color:var(--ink);border:1px solid var(--line);}
+  .picker{flex:1;min-width:0;height:36px;line-height:34px;padding:0 11px;border-radius:8px;font-size:12.5px;
+    border:1px solid var(--line);background:var(--card);color:var(--mute);cursor:pointer;
+    overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .applist{display:none;margin-top:9px;max-height:280px;overflow-y:auto;border-radius:8px;
+    background:var(--card);border:1px solid var(--line);}
+  .applist.show{display:block;}
+  .app{display:flex;align-items:center;gap:10px;padding:9px 11px;font-size:12.5px;color:var(--ink);
+    border-bottom:1px solid var(--line2);cursor:pointer;}
+  .app:last-child{border-bottom:none;}
+  .app:active{background:var(--redsoft);}
+  .app-icon{width:34px;height:34px;border-radius:8px;flex-shrink:0;display:flex;align-items:center;
+    justify-content:center;color:#fff;font-size:14px;font-weight:600;}
+  .app-icon.emoji{background:var(--elev);border:1px solid var(--line);font-size:17px;}
+  .app-icon-img{width:34px;height:34px;border-radius:8px;flex-shrink:0;object-fit:cover;
+    background:var(--elev);position:relative;z-index:2;}
+  .app-icon-holder{width:34px;height:34px;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;}
+  .app-icon-holder .app-icon{position:absolute;inset:0;width:34px;height:34px;border-radius:8px;z-index:1;}
+  .app-info{flex:1;min-width:0;}
+  .app-name{font-size:13px;font-weight:500;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .app-pkg{font-size:10px;color:var(--mute);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .tpls{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px;}
+  .tpl{height:32px;padding:0 12px;border-radius:6px;font-size:11.5px;font-weight:500;
+    background:var(--card);color:var(--mute);border:1px solid var(--line);cursor:pointer;font-family:inherit;}
+  .tpl.on{background:var(--redsoft);color:var(--red);border-color:var(--redline);font-weight:600;}
+  #result{margin-top:9px;padding:11px;border-radius:8px;font-size:11px;line-height:1.7;
+    background:var(--card);border:1px solid var(--line);color:var(--body);white-space:pre-wrap;
+    word-break:break-all;display:none;font-family:ui-monospace,"SF Mono",Menlo,monospace;}
+  #result.show{display:block;}
+  .tip{margin-top:8px;font-size:10px;color:var(--mute);line-height:1.6;}
+</style>
+<script>
+(function(){
+  function apply(t){ document.documentElement.classList.toggle("light", t==="light"); }
+  try{ if(localStorage.getItem("rmc-theme")==="light") apply("light"); }catch(e){}
+  window.addEventListener("message", function(e){
+    if(e && e.data && e.data.rmcTheme) apply(e.data.rmcTheme);
+  });
+})();
+</script>
+</head>
+<body>
+  <div class="head">
+    <div class="logo"><svg viewBox="0 0 24 24"><path d="M7 8h10a4 4 0 0 1 4 4v3a3 3 0 0 1-5.2 2.1L14 16H10l-1.8 1.1A3 3 0 0 1 3 15v-3a4 4 0 0 1 4-4z"/><path d="M9 11v2M8 12h2"/><circle cx="16" cy="12" r=".8"/></svg></div>
+    <div><h1>游戏环境工具</h1><small>GAME ENV TOOLKIT</small></div>
+  </div>
+
+  <div class="card">
+    <h2>清理游戏环境</h2>
+    <p>点下方选择应用，清空其数据 + 重置 Android ID / 序列号。</p>
+    <div class="row">
+      <div class="picker" id="pkgPicker" onclick="toggleApps()">点击选择应用…</div>
+      <button class="btn" onclick="doClean()">清理</button>
+    </div>
+    <div class="applist" id="appList"></div>
+  </div>
+
+  <div class="card">
+    <h2>Android ID</h2>
+    <p>随机生成新的 Android ID（部分应用需重启生效）。</p>
+    <div class="row"><button class="btn" style="flex:1" onclick="runTool('androidid')">一键随机化</button></div>
+  </div>
+
+  <div id="result"></div>
+  <div class="tip">所有操作通过 KSU root 执行；清理数据后游戏需要重新登录。</div>
+
+<script>
+  const MOD = "/data/adb/modules/redmagic_11_combo";
+  const TOOL = MOD + "/gametool.sh";
+  const out = document.getElementById("result");
+  let tpl = "", selPkg = "", appsLoaded = false;
+
+  function ksuApi() {
+    return (globalThis.ksu ||
+      (window.parent && window.parent.ksu) ||
+      (window.top && window.top.ksu) ||
+      (window.parent && window.parent.parent && window.parent.parent.ksu) ||
+      globalThis.$APATCH || null);
+  }
+  let execSeq = 0;
+  function sh(cmd) {
+    return new Promise(function (resolve) {
+      const api = ksuApi();
+      if (!api || typeof api.exec !== "function") {
+        // 回退：把命令发给外层页面（外层有 ksu）
+        const id = ++execSeq;
+        const timer = setTimeout(function () {
+          window.removeEventListener("message", handler);
+          resolve({ errno: -1, stdout: "", stderr: "执行超时" });
+        }, 30000);
+        function handler(ev) {
+          if (ev && ev.data && ev.data.gameExecResult === id) {
+            clearTimeout(timer);
+            window.removeEventListener("message", handler);
+            resolve({ errno: ev.data.errno, stdout: ev.data.stdout || "", stderr: "" });
+          }
+        }
+        window.addEventListener("message", handler);
+        try {
+          window.parent.postMessage({ gameExec: cmd, id: id }, "*");
+        } catch (e) {
+          clearTimeout(timer);
+          window.removeEventListener("message", handler);
+          resolve({ errno: -1, stdout: "", stderr: "无法转发到外层" });
+        }
+        return;
+      }
+      try {
+        const r = api.exec(cmd);
+        if (r && typeof r.then === "function") {
+          r.then(function (v) { resolve({ errno: 0, stdout: typeof v === "string" ? v : (v && v.stdout) || "", stderr: "" }); },
+                 function (e) { resolve({ errno: -1, stdout: "", stderr: String(e) }); });
+        } else {
+          resolve({ errno: 0, stdout: typeof r === "string" ? r : (r && r.stdout) || "", stderr: "" });
+        }
+      } catch (e) { resolve({ errno: -1, stdout: "", stderr: String(e) }); }
+    });
+  }
+  function show(txt) { out.textContent = txt; out.classList.add("show"); }
+
+  // 常见应用/游戏中文名映射（包名 → 名称）
+  const APP_NAMES = {
+    "com.tencent.tmgp.sgame": "王者荣耀",
+    "com.tencent.tmgp.pubgmhd": "和平精英",
+    "com.tencent.tmgp.cf": "穿越火线",
+    "com.tencent.tmgp.cod": "使命召唤",
+    "com.tencent.tmgp.speedmobile": "QQ飞车",
+    "com.tencent.tmgp.dnf": "地下城与勇士",
+    "com.tencent.lolm": "英雄联盟手游",
+    "com.miHoYo.Yuanshen": "原神",
+    "com.miHoYo.hkrpg": "崩坏星穹铁道",
+    "com.miHoYo.ZZZ": "绝区零",
+    "com.miHoYo.bh3": "崩坏3",
+    "com.netease.party": "蛋仔派对",
+    "com.netease.mrzh": "明日之后",
+    "com.netease.dwrg": "第五人格",
+    "com.netease.g67": "第五人格",
+    "com.netease.sky": "光遇",
+    "com.tencent.mm": "微信",
+    "com.tencent.mobileqq": "QQ",
+    "com.tencent.tim": "TIM",
+    "com.taobao.taobao": "淘宝",
+    "com.jingdong.app.mall": "京东",
+    "com.xunmeng.pinduoduo": "拼多多",
+    "com.eg.android.AlipayGphone": "支付宝",
+    "com.ss.android.ugc.aweme": "抖音",
+    "com.ss.android.ugc.live": "抖音直播",
+    "com.smile.gifmaker": "快手",
+    "tv.danmaku.bili": "哔哩哔哩",
+    "com.qiyi.video": "爱奇艺",
+    "com.youku.phone": "优酷",
+    "com.tencent.qqlive": "腾讯视频",
+    "com.netease.cloudmusic": "网易云音乐",
+    "com.tencent.qqmusic": "QQ音乐",
+    "com.kugou.android": "酷狗音乐",
+    "com.xingin.xhs": "小红书",
+    "com.sina.weibo": "微博",
+    "com.zhihu.android": "知乎",
+    "com.sankuai.meituan": "美团",
+    "me.ele": "饿了么",
+    "com.sdu.didi.psnger": "滴滴出行",
+    "com.autonavi.minimap": "高德地图",
+    "com.baidu.BaiduMap": "百度地图",
+    "com.UCMobile": "UC浏览器",
+    "com.tencent.mtt": "QQ浏览器",
+    "com.quark.browser": "夸克",
+    "com.coolapk.market": "酷安",
+    "com.dragonli.projectsnow.lhm": "三角洲行动",
+    "com.tencent.tmgp.projectsnow": "三角洲行动",
+    "com.pwrd.fhz": "幻塔",
+    "com.hypergryph.arknights": "明日方舟",
+    "com.mihoyo.hyperion": "米游社",
+    "bin.mt.plus": "MT管理器",
+    "bin.mt.termex": "MT终端",
+    "com.android.calculator2": "计算器",
+    "com.tencent.android.qqdownloader": "应用宝",
+    "com.qqgame.hlddz": "欢乐斗地主"
+  };
+
+  // 常见应用 emoji 图标（覆盖主流的，未知应用用彩色首字母）
+  const APP_EMOJI = {
+    "com.tencent.mm": "💬", "com.tencent.mobileqq": "🐧", "com.tencent.tim": "💼",
+    "com.tencent.tmgp.sgame": "👑", "com.tencent.tmgp.pubgmhd": "🎯",
+    "com.tencent.tmgp.cf": "🔫", "com.tencent.tmgp.cod": "🎖️",
+    "com.tencent.tmgp.speedmobile": "🏎️", "com.tencent.tmgp.dnf": "⚒️",
+    "com.tencent.lolm": "💎", "com.miHoYo.Yuanshen": "⚔️",
+    "com.miHoYo.hkrpg": "🌌", "com.miHoYo.ZZZ": "🌠", "com.miHoYo.bh3": "🌸",
+    "com.netease.party": "🥚", "com.netease.mrzh": "🧟", "com.netease.dwrg": "🎭",
+    "com.netease.sky": "🕊️", "com.dragonli.projectsnow.lhm": "🎯",
+    "com.tencent.tmgp.projectsnow": "🎯", "com.hypergryph.arknights": "🐰",
+    "com.pwrd.fhz": "🗡️",
+    "com.taobao.taobao": "🛒", "com.jingdong.app.mall": "📦",
+    "com.xunmeng.pinduoduo": "🍑", "com.eg.android.AlipayGphone": "💰",
+    "com.ss.android.ugc.aweme": "🎵", "com.ss.android.ugc.live": "📺",
+    "com.smile.gifmaker": "🎬", "tv.danmaku.bili": "📺",
+    "com.qiyi.video": "🎬", "com.youku.phone": "▶️", "com.tencent.qqlive": "🎥",
+    "com.netease.cloudmusic": "🎧", "com.tencent.qqmusic": "🎼", "com.kugou.android": "🎤",
+    "com.xingin.xhs": "📕", "com.sina.weibo": "🐦", "com.zhihu.android": "💡",
+    "com.sankuai.meituan": "🍜", "me.ele": "🥡", "com.sdu.didi.psnger": "🚗",
+    "com.autonavi.minimap": "🗺️", "com.baidu.BaiduMap": "🗺️",
+    "com.UCMobile": "🌀", "com.tencent.mtt": "🌐", "com.quark.browser": "⚡",
+    "com.coolapk.market": "🟢", "bin.mt.plus": "🔧", "bin.mt.termex": "💻",
+    "com.android.calculator2": "🧮", "com.tencent.android.qqdownloader": "📲",
+    "com.qqgame.hlddz": "🃏"
+  };
+
+  // 图标加载失败时回退（emoji 或彩色首字母）
+  function iconFallback(img) {
+    var emoji = img.dataset.emoji || "";
+    var initial = img.dataset.initial || "?";
+    var color = img.dataset.color || "#9aa6b2";
+    var div = document.createElement("div");
+    if (emoji) {
+      div.className = "app-icon emoji";
+      div.textContent = emoji;
+    } else {
+      div.className = "app-icon";
+      div.style.background = color;
+      div.textContent = initial;
+    }
+    if (img.parentNode) img.parentNode.replaceChild(div, img);
+  }
+
+  // 提取真实应用图标（后台运行，不阻塞页面）
+  let iconPollTimer = null;
+  function pollIcons() {
+    if (iconPollTimer) return;
+    iconPollTimer = setInterval(async function () {
+      const r = await sh("cat " + MOD + "/webroot/icons/.progress 2>/dev/null");
+      const line = (r.stdout || "").trim();
+      if (!line) return;
+      const p = line.split("|");
+      if (p[0] === "done") {
+        clearInterval(iconPollTimer); iconPollTimer = null;
+        show("图标提取完成：共 " + (p[4] || "?") + " 个真实图标\n重新打开应用列表即可看到");
+        appsLoaded = false;
+      } else if (p[0] === "running") {
+        show("图标提取中 " + p[1] + "/" + p[2] + "（后台运行，页面可以正常使用）…");
+      }
+    }, 2000);
+  }
+
+  async function extractIcons() {
+    show("正在启动后台图标提取…");
+    await sh("nohup sh " + MOD + "/icon_extract.sh > /dev/null 2>&1 &");
+    show("图标提取已在后台开始，不会卡住页面\n完成后会自动提示");
+    pollIcons();
+  }
+
+  // 包名 → 稳定的图标颜色
+  function iconColor(pkg) {
+    var h = 0;
+    for (var i = 0; i < pkg.length; i++) { h = (h * 31 + pkg.charCodeAt(i)) % 360; }
+    return "hsl(" + h + ", 52%, 58%)";
+  }
+
+  async function toggleApps() {
+    const list = document.getElementById("appList");
+    if (list.classList.contains("show")) { list.classList.remove("show"); return; }
+    if (!appsLoaded) {
+      list.innerHTML = '<div class="app">正在读取应用列表…</div>';
+      list.classList.add("show");
+      const r = await sh("sh " + TOOL + " apps 2>&1");
+      const pkgs = (r.stdout || "").split("|").map(function (l) { return l.trim(); })
+        .filter(function (p) { return p && p.indexOf(".") > 0; }).sort();
+      if (!pkgs.length) { list.innerHTML = '<div class="app">未读到应用（可能权限不足）</div>'; return; }
+      list.innerHTML = pkgs.map(function (p) {
+        var name = APP_NAMES[p] || p.split(".").pop();
+        var initial = name.charAt(0).toUpperCase();
+        var color = iconColor(p);
+        var emoji = APP_EMOJI[p] || "";
+        var iconHtml = '<span class="app-icon-holder" data-emoji="' + emoji + '" data-initial="' + initial + '" data-color="' + color + '">' +
+          '<img class="app-icon-img" data-src="ksu://icon/' + p + '" ' +
+          'data-emoji="' + emoji + '" data-initial="' + initial + '" data-color="' + color + '" ' +
+          'onerror="iconFallback(this)" alt="">' +
+          '<span class="app-icon emoji">' + (emoji || initial) + '</span></span>';
+        return '<div class="app" data-p="' + p + '">' + iconHtml +
+          '<div class="app-info"><div class="app-name">' + name + '</div>' +
+          '<div class="app-pkg">' + p + '</div></div></div>';
+      }).join("");
+      list.querySelectorAll(".app").forEach(function (el) {
+        el.onclick = function () {
+          selPkg = el.dataset.p;
+          var pk = document.getElementById("pkgPicker");
+          pk.textContent = selPkg; pk.style.color = "#333a46";
+          list.classList.remove("show");
+        };
+      });
+      appsLoaded = true;
+      lazyIcons(list);
+    } else { list.classList.add("show"); }
+  }
+
+  // 只给可见的应用加载真实图标（避免一次渲染 68 个图标导致卡顿）
+  function lazyIcons(root) {
+    const imgs = root.querySelectorAll("img.app-icon-img");
+    if (!("IntersectionObserver" in window)) {
+      imgs.forEach(function (im) { if (im.dataset.src) im.src = im.dataset.src; });
+      return;
+    }
+    const io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (!en.isIntersecting) return;
+        const im = en.target;
+        io.unobserve(im);
+        if (im.dataset.src) im.src = im.dataset.src;
+      });
+    }, { root: root, rootMargin: "120px" });
+    imgs.forEach(function (im) { io.observe(im); });
+  }
+
+  function pickTpl(el) {
+    document.querySelectorAll(".tpl").forEach(function (n) { n.classList.remove("on"); });
+    el.classList.add("on"); tpl = el.dataset.t;
+  }
+
+  async function runTool(cmd, arg) {
+    show("执行中…");
+    const full = "sh " + TOOL + " " + cmd + (arg ? " " + arg : "") + " 2>&1";
+    const r = await sh(full);
+    show((r.stdout || r.stderr || "无输出").trim());
+  }
+
+  async function doClean() {
+    if (!selPkg) { show("请先点上方选择要清理的应用"); return; }
+    if (!confirm("确认清理 " + selPkg + " 的数据？将清空游戏数据并重置标识。")) return;
+    await runTool("clean", selPkg);
+  }
+
+  async function applySpoof() {
+    const m = (document.getElementById("customModel").value || "").trim();
+    const b = (document.getElementById("customBrand").value || "").trim();
+    if (m) {
+      if (!confirm("应用自定义机型 " + m + "？重启游戏后生效。")) return;
+      show("执行中…");
+      const r = await sh("sh " + TOOL + " spoof custom " + m + " " + (b || "nubia") + " 2>&1");
+      show((r.stdout || r.stderr || "无输出").trim());
+      return;
+    }
+    if (!tpl) { show("请选择预设模板，或填写自定义型号"); return; }
+    if (!confirm("应用机型伪装？需要重启游戏才能生效。")) return;
+    await runTool("spoof", tpl);
+  }
+
+  (function () {
+    var sx = 0, sy = 0;
+    document.addEventListener("touchstart", function (e) {
+      if (e.touches && e.touches.length) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; }
+    }, { passive: true });
+    document.addEventListener("touchend", function (e) {
+      if (!e.changedTouches || !e.changedTouches.length) return;
+      var dx = e.changedTouches[0].clientX - sx;
+      var dy = e.changedTouches[0].clientY - sy;
+      if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.6) {
+        try { if (window.parent && window.parent !== window) window.parent.postMessage({ yhSwipe: dx < 0 ? 1 : -1 }, "*"); } catch (err) {}
+      }
+    }, { passive: true });
+  })();
+
+  (async function () {
+    const r = await sh("sh " + TOOL + " status 2>&1");
+    if (r.stdout) show(r.stdout.trim());
+    // 上次提取中断/进行中 → 继续轮询
+    const pr = await sh("cat " + MOD + "/webroot/icons/.progress 2>/dev/null");
+    if ((pr.stdout || "").indexOf("running") === 0) pollIcons();
+  })();
+</script>
+<script>
+  function syncH() {
+    try {
+      var h = 0;
+      Array.prototype.forEach.call(document.body.children, function (el) {
+        var r = el.getBoundingClientRect();
+        if (r.bottom > h) h = r.bottom;
+      });
+      window.parent.postMessage({ gameHeight: Math.ceil(h) + 14 }, "*");
+    } catch (e) {}
+  }
+  window.addEventListener("load", function () { syncH(); setTimeout(syncH, 350); });
+  document.addEventListener("click", function () { setTimeout(syncH, 120); });
+  setTimeout(syncH, 100);
+</script>
+</body>
+</html>

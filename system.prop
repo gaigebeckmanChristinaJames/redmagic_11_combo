@@ -1,0 +1,3 @@
+# NX799J 红魔11Air 真实属性（属性名均经 vendor 库字符串验证存在）
+# 多摄融合强制使用 ZTE SAT 算法（com.zte.node.capturepostprocess.so 读取）
+persist.vendor.camera.sat.useztealgo=1
